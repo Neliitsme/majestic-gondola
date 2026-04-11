@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:18.3-bookworm
+    environment:
+      POSTGRES_DB: "mg-postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    ports:
+      - "5432:5432"
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
