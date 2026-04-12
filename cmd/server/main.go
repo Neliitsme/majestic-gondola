@@ -10,6 +10,7 @@ import (
 
 	_ "majestic-gondola/docs"
 	"majestic-gondola/internal/handlers"
+	"majestic-gondola/internal/repository"
 
 	"majestic-gondola/bootstrap"
 )
@@ -63,7 +64,8 @@ func main() {
 		})
 	})
 
-	trackHandler := handlers.NewTrackHandler(db, logger)
+	trackRepository := repository.NewTrackRepository(db, logger)
+	trackHandler := handlers.NewTrackHandler(trackRepository, logger)
 
 	r.GET("/track", trackHandler.GetTracks)
 	r.POST("/track", trackHandler.CreateTracks)

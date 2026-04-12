@@ -4,20 +4,21 @@ import (
 	"fmt"
 	"log/slog"
 	"majestic-gondola/internal/models"
+	"majestic-gondola/internal/repository"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-pg/pg/v10"
 )
 
 type TrackHandler struct {
-	db     *pg.DB
-	logger *slog.Logger
+	log             *slog.Logger
+	trackRepository *repository.TrackRepository
 }
 
-func NewTrackHandler(db *pg.DB, logger *slog.Logger) *TrackHandler {
-	return &TrackHandler{db: db, logger: logger}
+func NewTrackHandler(trackRepository *repository.TrackRepository, logger *slog.Logger) *TrackHandler {
+	return &TrackHandler{log: logger, trackRepository: trackRepository}
 }
 
 // GetTracks godoc
@@ -33,12 +34,24 @@ func NewTrackHandler(db *pg.DB, logger *slog.Logger) *TrackHandler {
 //	@Router			/track [get]
 func (h *TrackHandler) GetTracks(c *gin.Context) {
 	var tracks []models.Track
-	id := c.Query("id")
+	strId := c.Query("id")
 
-	if len(id) > 0 {
-		h.db.Model(&tracks).Where("id = ?", id).Select()
+	if len(strId) == 0 {
+		rTracks, err := h.trackRepository.GetAll()
+		if err != nil {
+			panic(err)
+		}
+
+		tracks = rTracks
+	} else if id, err := strconv.Atoi(strId); err == nil {
+		track, err := h.trackRepository.FindById(id)
+		if err != nil {
+			panic(err)
+		}
+
+		tracks = []models.Track{*track}
 	} else {
-		h.db.Model(&tracks).Select()
+		c.JSON(http.StatusBadRequest, "Bad query param")
 	}
 
 	c.JSON(http.StatusOK, tracks)
@@ -77,14 +90,13 @@ func (h *TrackHandler) CreateTracks(c *gin.Context) {
 	}
 
 	// TODO: Wrap model creation with logger?
-	_, err := h.db.Model(&tracks).Insert()
+	err := h.trackRepository.BulkCreate(tracks)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+		panic(err)
 	}
 
-	h.logger.Info("Created a new track")
+	h.log.Info("Created a new track")
 }
 
 // PopulateTracks godoc
@@ -123,12 +135,11 @@ func (h *TrackHandler) PopulateTracks(c *gin.Context) {
 	}
 
 	// TODO: Wrap model creation with logger?
-	_, err := h.db.Model(&tracks).Insert()
+	err := h.trackRepository.BulkCreate(tracks)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+		panic(err)
 	}
 
-	h.logger.Info("Created several new tracks")
+	h.log.Info("Created several new tracks")
 }
