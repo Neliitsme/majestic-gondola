@@ -1,4 +1,21 @@
 basePath: /
+definitions:
+  majestic-gondola_internal_models.CreateTrackRequest:
+    properties:
+      author:
+        type: string
+      genres:
+        items:
+          type: string
+        type: array
+      name:
+        type: string
+      release_date:
+        type: string
+    required:
+    - author
+    - name
+    type: object
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
@@ -23,4 +40,68 @@ paths:
       - application/json
       responses: {}
       summary: Ping service
+  /track:
+    get:
+      consumes:
+      - application/json
+      description: Get all tracks or filter by ID via query parameter
+      parameters:
+      - description: Track ID
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+      summary: Get tracks
+      tags:
+      - tracks
+    post:
+      consumes:
+      - application/json
+      description: Bulk create tracks from a JSON array
+      parameters:
+      - description: Array of tracks to create
+        in: body
+        name: tracks
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/majestic-gondola_internal_models.CreateTrackRequest'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      summary: Create new tracks
+      tags:
+      - tracks
+  /track/populate/{count}:
+    post:
+      consumes:
+      - application/json
+      description: Generate a specified number of dummy tracks for testing
+      parameters:
+      - description: Number of tracks to generate
+        in: path
+        name: count
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      summary: Populate dummy tracks
+      tags:
+      - tracks
 swagger: "2.0"

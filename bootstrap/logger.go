@@ -25,6 +25,7 @@ func SlogMiddleware(logger *slog.Logger) gin.HandlerFunc {
 			slog.Int("body_size", c.Writer.Size()),
 		)
 
+		// TODO: Doesn't seem to be working
 		if len(c.Errors) > 0 {
 			for _, err := range c.Errors {
 				logger.Error("request error", slog.String("error", err.Error()))

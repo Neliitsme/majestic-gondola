@@ -22,7 +22,9 @@ func LoadConfig(l *slog.Logger) *Config {
 		panic(fmt.Errorf("fatal error config file: %w", err))
 	}
 
-	l.Info("Loaded config successfully.")
+	if l != nil {
+		l.Info("Loaded config successfully.")
+	}
 
 	return &config
 }

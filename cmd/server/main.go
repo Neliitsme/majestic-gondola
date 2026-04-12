@@ -9,6 +9,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 
 	_ "majestic-gondola/docs"
+	"majestic-gondola/internal/handlers"
 
 	"majestic-gondola/bootstrap"
 )
@@ -40,24 +41,33 @@ import (
 //	@Produce		json
 //	@Router			/ping [get]
 func main() {
+	// Set up logger
 	logger := slog.New(slog.Default().Handler())
 	slog.SetDefault(logger)
 
+	// Set up configs
 	config := bootstrap.LoadConfig(logger)
+
+	// Set up db connection
 	db := bootstrap.GetDbConnection(config, logger)
 	defer db.Close()
 
-	// r := gin.New()
-	// r.Use(bootstrap.SlogMiddleware(logger))
-	// r.Use(gin.Recovery())
-
-	r := gin.Default()
+	// Set up web app
+	r := gin.New()
+	r.Use(bootstrap.SlogMiddleware(logger))
+	r.Use(gin.Recovery())
 
 	r.GET("/ping", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{
 			"message": "Pong",
 		})
 	})
+
+	trackHandler := handlers.NewTrackHandler(db, logger)
+
+	r.GET("/track", trackHandler.GetTracks)
+	r.POST("/track", trackHandler.CreateTracks)
+	r.POST("/track/populate/:count", trackHandler.PopulateTracks)
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

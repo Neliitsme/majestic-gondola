@@ -27,6 +27,130 @@
                 "summary": "Ping service",
                 "responses": {}
             }
+        },
+        "/track": {
+            "get": {
+                "description": "Get all tracks or filter by ID via query parameter",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tracks"
+                ],
+                "summary": "Get tracks",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Track ID",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "post": {
+                "description": "Bulk create tracks from a JSON array",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tracks"
+                ],
+                "summary": "Create new tracks",
+                "parameters": [
+                    {
+                        "description": "Array of tracks to create",
+                        "name": "tracks",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/majestic-gondola_internal_models.CreateTrackRequest"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        },
+        "/track/populate/{count}": {
+            "post": {
+                "description": "Generate a specified number of dummy tracks for testing",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tracks"
+                ],
+                "summary": "Populate dummy tracks",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Number of tracks to generate",
+                        "name": "count",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "majestic-gondola_internal_models.CreateTrackRequest": {
+            "type": "object",
+            "required": [
+                "author",
+                "name"
+            ],
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "genres": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "release_date": {
+                    "type": "string"
+                }
+            }
         }
     },
     "externalDocs": {

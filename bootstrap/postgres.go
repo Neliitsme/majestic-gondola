@@ -17,7 +17,9 @@ func GetDbConnection(c *Config, l *slog.Logger) *pg.DB {
 	}
 	db := pg.Connect(opt)
 
-	l.Info("Connected to postgres successfully.")
+	if l != nil {
+		l.Info("Connected to postgres successfully.")
+	}
 
 	return db
 }

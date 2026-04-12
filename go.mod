@@ -4,6 +4,7 @@ go 1.26.2
 
 require (
 	github.com/gin-gonic/gin v1.12.0
+	github.com/go-pg/migrations/v8 v8.1.0
 	github.com/go-pg/pg/v10 v10.15.0
 	github.com/spf13/viper v1.21.0
 	github.com/swaggo/files v1.0.1
