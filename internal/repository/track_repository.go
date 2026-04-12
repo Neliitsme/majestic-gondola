@@ -13,7 +13,7 @@ type TrackRepository struct {
 }
 
 func NewTrackRepository(db *pg.DB, logger *slog.Logger) *TrackRepository {
-	return &TrackRepository{db: db, log: logger}
+	return &TrackRepository{db: db, log: logger.With("component", "track_repository")}
 }
 
 func (r *TrackRepository) FindById(id int) (*models.Track, error) {

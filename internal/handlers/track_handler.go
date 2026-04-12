@@ -18,7 +18,7 @@ type TrackHandler struct {
 }
 
 func NewTrackHandler(trackRepository *repository.TrackRepository, logger *slog.Logger) *TrackHandler {
-	return &TrackHandler{log: logger, trackRepository: trackRepository}
+	return &TrackHandler{log: logger.With("component", "track_handler"), trackRepository: trackRepository}
 }
 
 // GetTracks godoc
@@ -89,7 +89,6 @@ func (h *TrackHandler) CreateTracks(c *gin.Context) {
 		tracks = append(tracks, &track)
 	}
 
-	// TODO: Wrap model creation with logger?
 	err := h.trackRepository.BulkCreate(tracks)
 
 	if err != nil {
@@ -134,7 +133,6 @@ func (h *TrackHandler) PopulateTracks(c *gin.Context) {
 		tracks = append(tracks, &track)
 	}
 
-	// TODO: Wrap model creation with logger?
 	err := h.trackRepository.BulkCreate(tracks)
 
 	if err != nil {
