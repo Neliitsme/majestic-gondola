@@ -110,7 +110,6 @@ func (h *TrackHandler) CreateTracks(c *gin.Context) {
 //	@Failure		400
 //	@Router			/track/populate/{count} [post]
 func (h *TrackHandler) PopulateTracks(c *gin.Context) {
-
 	req := struct {
 		Count int `uri:"count" binding:"required"`
 	}{}
@@ -140,4 +139,40 @@ func (h *TrackHandler) PopulateTracks(c *gin.Context) {
 	}
 
 	h.log.Info("Created several new tracks")
+}
+
+// UpdateTrack godoc
+//
+//	@Summary		Update an existing track
+//	@Description	Update track details based on the provided JSON body
+//	@Tags			tracks
+//	@Accept			json
+//	@Produce		json
+//	@Param			track	body	models.UpdateTrackRequest	true	"Updated track data"
+//	@Success		200
+//	@Failure		400
+//	@Failure		500
+//	@Router			/track [put]
+func (h *TrackHandler) UpdateTrack(c *gin.Context) {
+	var req models.UpdateTrackRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	track := models.Track{
+		Id:          req.Id,
+		Name:        req.Name,
+		Author:      req.Author,
+		ReleaseDate: req.ReleaseDate,
+		Genres:      req.Genres,
+	}
+
+	err := h.trackRepository.Update(&track)
+	if err != nil {
+		panic(err)
+	}
+
+	h.log.Info("Updated a track")
 }

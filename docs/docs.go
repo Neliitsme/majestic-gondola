@@ -64,6 +64,41 @@ const docTemplate = `{
                     }
                 }
             },
+            "put": {
+                "description": "Update track details based on the provided JSON body",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tracks"
+                ],
+                "summary": "Update an existing track",
+                "parameters": [
+                    {
+                        "description": "Updated track data",
+                        "name": "track",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/majestic-gondola_internal_models.UpdateTrackRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
             "post": {
                 "description": "Bulk create tracks from a JSON array",
                 "consumes": [
@@ -149,6 +184,32 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "release_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "majestic-gondola_internal_models.UpdateTrackRequest": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "genres": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "integer"
                 },
                 "name": {
                     "type": "string"

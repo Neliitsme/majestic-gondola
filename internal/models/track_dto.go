@@ -8,3 +8,11 @@ type CreateTrackRequest struct {
 	ReleaseDate time.Time `json:"release_date"`
 	Genres      []string  `json:"genres"`
 }
+
+type UpdateTrackRequest struct {
+	Id          int       `json:"id" binding:"required"`
+	Name        string    `json:"name"`
+	Author      string    `json:"author"`
+	ReleaseDate time.Time `json:"release_date"`
+	Genres      []string  `json:"genres"`
+}

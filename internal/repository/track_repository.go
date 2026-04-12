@@ -35,3 +35,9 @@ func (r *TrackRepository) BulkCreate(tracks []*models.Track) error {
 	r.log.Info("Finished BulkCreate")
 	return err
 }
+
+func (r *TrackRepository) Update(track *models.Track) error {
+	_, err := r.db.Model(track).ExcludeColumn("created_at").WherePK().Update()
+	r.log.Info("Finsihed Update")
+	return err
+}

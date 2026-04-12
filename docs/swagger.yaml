@@ -16,6 +16,23 @@ definitions:
     - author
     - name
     type: object
+  majestic-gondola_internal_models.UpdateTrackRequest:
+    properties:
+      author:
+        type: string
+      genres:
+        items:
+          type: string
+        type: array
+      id:
+        type: integer
+      name:
+        type: string
+      release_date:
+        type: string
+    required:
+    - id
+    type: object
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
@@ -81,6 +98,29 @@ paths:
         "400":
           description: Bad Request
       summary: Create new tracks
+      tags:
+      - tracks
+    put:
+      consumes:
+      - application/json
+      description: Update track details based on the provided JSON body
+      parameters:
+      - description: Updated track data
+        in: body
+        name: track
+        required: true
+        schema:
+          $ref: '#/definitions/majestic-gondola_internal_models.UpdateTrackRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: Update an existing track
       tags:
       - tracks
   /track/populate/{count}:

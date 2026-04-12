@@ -70,6 +70,7 @@ func main() {
 	r.GET("/track", trackHandler.GetTracks)
 	r.POST("/track", trackHandler.CreateTracks)
 	r.POST("/track/populate/:count", trackHandler.PopulateTracks)
+	r.PUT("/track", trackHandler.UpdateTrack)
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
