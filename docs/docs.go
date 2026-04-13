@@ -47,14 +47,6 @@ const docTemplate = `{
                     "tracks"
                 ],
                 "summary": "Get tracks",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Track ID",
-                        "name": "id",
-                        "in": "query"
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -166,6 +158,56 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/track/{id}": {
+            "get": {
+                "description": "Retrieve a single music track from the database using its unique ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tracks"
+                ],
+                "summary": "Get a track by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Track ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/majestic-gondola_internal_models.Track"
+                        }
+                    },
+                    "404": {
+                        "description": "Id not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -189,6 +231,32 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "release_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "majestic-gondola_internal_models.Track": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "genres": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "releaseDate": {
                     "type": "string"
                 }
             }

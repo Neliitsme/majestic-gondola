@@ -68,6 +68,7 @@ func main() {
 	trackHandler := handlers.NewTrackHandler(trackRepository, logger)
 
 	r.GET("/track", trackHandler.GetTracks)
+	r.GET("/track/:id", trackHandler.GetTrack)
 	r.POST("/track", trackHandler.CreateTracks)
 	r.POST("/track/populate/:count", trackHandler.PopulateTracks)
 	r.PUT("/track", trackHandler.UpdateTrack)

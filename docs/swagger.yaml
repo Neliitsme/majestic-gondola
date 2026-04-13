@@ -16,6 +16,23 @@ definitions:
     - author
     - name
     type: object
+  majestic-gondola_internal_models.Track:
+    properties:
+      author:
+        type: string
+      createdAt:
+        type: string
+      genres:
+        items:
+          type: string
+        type: array
+      id:
+        type: integer
+      name:
+        type: string
+      releaseDate:
+        type: string
+    type: object
   majestic-gondola_internal_models.UpdateTrackRequest:
     properties:
       author:
@@ -62,11 +79,6 @@ paths:
       consumes:
       - application/json
       description: Get all tracks or filter by ID via query parameter
-      parameters:
-      - description: Track ID
-        in: query
-        name: id
-        type: integer
       produces:
       - application/json
       responses:
@@ -121,6 +133,40 @@ paths:
         "500":
           description: Internal Server Error
       summary: Update an existing track
+      tags:
+      - tracks
+  /track/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a single music track from the database using its unique
+        ID
+      parameters:
+      - description: Track ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/majestic-gondola_internal_models.Track'
+        "404":
+          description: Id not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get a track by ID
       tags:
       - tracks
   /track/populate/{count}:

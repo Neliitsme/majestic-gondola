@@ -6,10 +6,10 @@ import (
 	"majestic-gondola/internal/models"
 	"majestic-gondola/internal/repository"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-pg/pg/v10"
 )
 
 type TrackHandler struct {
@@ -28,38 +28,60 @@ func NewTrackHandler(trackRepository *repository.TrackRepository, logger *slog.L
 //	@Tags			tracks
 //	@Accept			json
 //	@Produce		json
-//	@Param			id	query	int	false	"Track ID"
 //	@Success		200
 //	@Failure		500
 //	@Router			/track [get]
 func (h *TrackHandler) GetTracks(c *gin.Context) {
 	var tracks []models.Track
-	strId := c.Query("id")
 
-	if strId == "" {
-		rTracks, err := h.trackRepository.GetAll()
-		if err != nil {
-			h.log.Error("Failed to fetch the track list", slog.Any("error", err))
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
-			return
-		}
-
-		tracks = rTracks
-	} else if id, err := strconv.Atoi(strId); err == nil {
-		track, err := h.trackRepository.FindById(id)
-		if err != nil {
-			h.log.Error("Failed to fetch a track by id", slog.Any("error", err), slog.Int("id", id))
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
-			return
-		}
-
-		tracks = []models.Track{*track}
-	} else {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Bad query param"})
+	rTracks, err := h.trackRepository.GetAll()
+	if err != nil {
+		h.log.Error("Failed to fetch the track list", slog.Any("error", err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 		return
 	}
 
+	tracks = rTracks
+
 	c.JSON(http.StatusOK, tracks)
+}
+
+// GetTrack godoc
+//
+//	@Summary		Get a track by ID
+//	@Description	Retrieve a single music track from the database using its unique ID
+//	@Tags			tracks
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		int	true	"Track ID"
+//	@Success		200	{object}	models.Track
+//	@Failure		404	{object}	map[string]string	"Id not found"
+//	@Failure		500	{object}	map[string]string	"Internal server error"
+//	@Router			/track/{id} [get]
+func (h *TrackHandler) GetTrack(c *gin.Context) {
+	req := struct {
+		Id int `uri:"id" binding:"required"`
+	}{}
+
+	if err := c.ShouldBindUri(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	track, err := h.trackRepository.FindById(req.Id)
+
+	if err == pg.ErrNoRows {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Track not found"})
+		return
+	}
+
+	if err != nil {
+		h.log.Error("Failed to fetch a track by id", slog.Any("error", err), slog.Int("id", req.Id))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		return
+	}
+
+	c.JSON(http.StatusOK, track)
 }
 
 // CreateTracks godoc
@@ -103,6 +125,7 @@ func (h *TrackHandler) CreateTracks(c *gin.Context) {
 	}
 
 	h.log.Info("Created a new track")
+	c.Status(http.StatusCreated)
 }
 
 // PopulateTracks godoc
@@ -148,6 +171,7 @@ func (h *TrackHandler) PopulateTracks(c *gin.Context) {
 	}
 
 	h.log.Info("Created several new tracks")
+	c.Status(http.StatusCreated)
 }
 
 // UpdateTrack godoc
@@ -186,4 +210,5 @@ func (h *TrackHandler) UpdateTrack(c *gin.Context) {
 	}
 
 	h.log.Info("Updated a track")
+	c.Status(http.StatusOK)
 }
