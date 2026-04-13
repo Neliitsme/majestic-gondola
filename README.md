@@ -20,19 +20,26 @@ To run the app:
 docker compose up -d
 ```
 
-2. cd into the migartion folder and create the database schema with
+2. Set up the `.env` file by copying the `.env.example` with the following command.
+
+*Unless* you modify anything credential-sensitive, the example file has valid strings and keys to get this app up and running. It's a test project after all.
+```sh
+cp .env.example .env
+```
+
+3. cd into the `migartion` folder and restore the database schema with
 ```sh
 go run . usage # check the list of available commands
 go run . init
 go run .
 ```
 
-3. Start the app from the project's root with
+4. Start the app from the project's root with
 ```sh
 go run ./cmd/server
 ```
 
-(Optionally) generate the swag docs with
+(Optionally) generate the swag docs with the following command. You only need to do it if you modify the API. Otherwise the up-to-date docs are present in the `/docs` folder and should be accessible by going to `<host>:<port>/swagger/index.html` when you run the app.
 ```sh
 swag init -g cmd/server/main.go --parseDependency --dir ./,./internal/handlers,./internal/models
 ```
