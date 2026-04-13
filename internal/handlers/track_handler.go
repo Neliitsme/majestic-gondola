@@ -36,22 +36,27 @@ func (h *TrackHandler) GetTracks(c *gin.Context) {
 	var tracks []models.Track
 	strId := c.Query("id")
 
-	if len(strId) == 0 {
+	if strId == "" {
 		rTracks, err := h.trackRepository.GetAll()
 		if err != nil {
-			panic(err)
+			h.log.Error("Failed to fetch the track list", slog.Any("error", err))
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+			return
 		}
 
 		tracks = rTracks
 	} else if id, err := strconv.Atoi(strId); err == nil {
 		track, err := h.trackRepository.FindById(id)
 		if err != nil {
-			panic(err)
+			h.log.Error("Failed to fetch a track by id", slog.Any("error", err), slog.Int("id", id))
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+			return
 		}
 
 		tracks = []models.Track{*track}
 	} else {
-		c.JSON(http.StatusBadRequest, "Bad query param")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Bad query param"})
+		return
 	}
 
 	c.JSON(http.StatusOK, tracks)
@@ -92,7 +97,9 @@ func (h *TrackHandler) CreateTracks(c *gin.Context) {
 	err := h.trackRepository.BulkCreate(tracks)
 
 	if err != nil {
-		panic(err)
+		h.log.Error("Failed to bulk create tracks", slog.Any("error", err), slog.Any("request", req), slog.Any("parsed_tracks", tracks))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		return
 	}
 
 	h.log.Info("Created a new track")
@@ -100,7 +107,7 @@ func (h *TrackHandler) CreateTracks(c *gin.Context) {
 
 // PopulateTracks godoc
 //
-//	@Summary		Populate dummy tracks
+//	@Summary		Populate dummy tracks. Dev only.
 //	@Description	Generate a specified number of dummy tracks for testing
 //	@Tags			tracks
 //	@Accept			json
@@ -135,7 +142,9 @@ func (h *TrackHandler) PopulateTracks(c *gin.Context) {
 	err := h.trackRepository.BulkCreate(tracks)
 
 	if err != nil {
-		panic(err)
+		h.log.Error("Failed to bulk create tracks during population", slog.Any("error", err), slog.Any("generated_tracks", tracks))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		return
 	}
 
 	h.log.Info("Created several new tracks")
@@ -171,7 +180,9 @@ func (h *TrackHandler) UpdateTrack(c *gin.Context) {
 
 	err := h.trackRepository.Update(&track)
 	if err != nil {
-		panic(err)
+		h.log.Error("Failed to update the track", slog.Any("error", err), slog.Any("parsed_track", track))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		return
 	}
 
 	h.log.Info("Updated a track")
