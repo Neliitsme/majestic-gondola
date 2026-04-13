@@ -7,6 +7,13 @@ import (
 	"github.com/go-pg/pg/v10"
 )
 
+type TrackStore interface {
+	FindById(id int) (*models.Track, error)
+	GetAll() ([]models.Track, error)
+	BulkCreate(tracks []*models.Track) error
+	Update(track *models.Track) error
+}
+
 type TrackRepository struct {
 	db  *pg.DB
 	log *slog.Logger

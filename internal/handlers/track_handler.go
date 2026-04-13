@@ -14,7 +14,7 @@ import (
 
 type TrackHandler struct {
 	log             *slog.Logger
-	trackRepository *repository.TrackRepository
+	trackRepository repository.TrackStore
 }
 
 func NewTrackHandler(trackRepository *repository.TrackRepository, logger *slog.Logger) *TrackHandler {
