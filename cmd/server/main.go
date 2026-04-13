@@ -50,7 +50,7 @@ func main() {
 	config := bootstrap.LoadConfig(logger)
 
 	// Set up db connection
-	db := bootstrap.GetDbConnection(config, logger)
+	db := bootstrap.NewDbConnection(config, logger)
 	defer db.Close()
 
 	// Set up web app

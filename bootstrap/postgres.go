@@ -10,7 +10,7 @@ import (
 // usage:
 // db := config.GetConnection()
 // defer db.Close()
-func GetDbConnection(c *Config, l *slog.Logger) *pg.DB {
+func NewDbConnection(c *Config, l *slog.Logger) *pg.DB {
 	opt, err := pg.ParseURL(c.PostgresUrl)
 	if err != nil {
 		panic(err)
