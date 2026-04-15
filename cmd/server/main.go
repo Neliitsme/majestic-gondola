@@ -75,5 +75,9 @@ func main() {
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	r.Run(":8080")
+	if config.Address != "" {
+		r.Run(config.Address)
+	} else {
+		r.Run()
+	}
 }

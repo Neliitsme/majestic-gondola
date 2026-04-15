@@ -9,6 +9,7 @@ import (
 
 type Config struct {
 	PostgresUrl string `mapstructure:"POSTGRES_URL"`
+	Address     string `mapstructure:"ADDRESS"`
 }
 
 func LoadConfig(l *slog.Logger) *Config {
