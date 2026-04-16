@@ -58,11 +58,6 @@ func main() {
 		os.Exit(2)
 	}
 
-	// if flag.Arg(0) == "create_schema" {
-	// 	createSchema(db)
-	// 	os.Exit(2)
-	// }
-
 	oldVersion, newVersion, err := migrations.Run(db, flag.Args()...)
 
 	if err != nil {
@@ -83,25 +78,3 @@ func usage() {
 	flag.PrintDefaults()
 	os.Exit(2)
 }
-
-// func createSchema(db *pg.DB) {
-// 	models := []interface{}{
-// 		(*repository.Track)(nil),
-// 	}
-
-// 	opt := &orm.CreateTableOptions{
-// 		IfNotExists: true,
-// 	}
-
-// 	for _, model := range models {
-// 		err := db.Model(model).CreateTable(opt)
-
-// 		if err != nil {
-// 			panic(err)
-// 		}
-
-// 		fmt.Printf("Created table successfully: %s", model)
-// 	}
-
-// 	fmt.Printf("Created schema successfully")
-// }
