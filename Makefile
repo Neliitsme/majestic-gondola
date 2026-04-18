@@ -1,6 +1,7 @@
 MAIN_PATH=./cmd/server/main.go
+BINARY_NAME=server
 
-.PHONY: run swag setup
+.PHONY: run swag setup build clean
 
 run: swag
 	go run $(MAIN_PATH)
@@ -10,3 +11,9 @@ swag:
 
 setup:
 	cp .env.example .env
+
+build:
+	go build -o $(BINARY_NAME) $(MAIN_PATH)
+
+clean:
+	rm -f $(BINARY_NAME)
