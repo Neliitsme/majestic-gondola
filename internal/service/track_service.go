@@ -19,7 +19,7 @@ type trackService struct {
 }
 
 func NewTrackService(trackRepository repository.TrackRepository, logger *slog.Logger) TrackService {
-	return &trackService{log: logger.With("component", "track_handler"), trackRepository: trackRepository}
+	return &trackService{log: logger.With("component", "track_service"), trackRepository: trackRepository}
 }
 
 func (s *trackService) Get(id int) (*models.Track, error) {
