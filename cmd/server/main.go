@@ -11,6 +11,7 @@ import (
 	_ "majestic-gondola/docs"
 	"majestic-gondola/internal/handlers"
 	"majestic-gondola/internal/repository"
+	"majestic-gondola/internal/service"
 
 	"majestic-gondola/bootstrap"
 )
@@ -64,14 +65,16 @@ func main() {
 		})
 	})
 
-	trackRepository := repository.NewTrackRepository(db, logger)
-	trackHandler := handlers.NewTrackHandler(trackRepository, logger)
+	// Set up dependencies
+	tr := repository.NewTrackRepository(db, logger)
+	tsvc := service.NewTrackService(tr, logger)
+	th := handlers.NewTrackHandler(tsvc, logger)
 
-	r.GET("/track", trackHandler.GetTracks)
-	r.GET("/track/:id", trackHandler.GetTrack)
-	r.POST("/track", trackHandler.CreateTracks)
-	r.POST("/track/populate/:count", trackHandler.PopulateTracks)
-	r.PUT("/track", trackHandler.UpdateTrack)
+	r.GET("/track", th.GetTracks)
+	r.GET("/track/:id", th.GetTrack)
+	r.POST("/track", th.CreateTracks)
+	r.POST("/track/populate/:count", th.PopulateTracks)
+	r.PUT("/track", th.UpdateTrack)
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

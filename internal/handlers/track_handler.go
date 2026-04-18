@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"majestic-gondola/internal/models"
-	"majestic-gondola/internal/repository"
+	"majestic-gondola/internal/service"
 	"net/http"
 	"time"
 
@@ -13,12 +13,12 @@ import (
 )
 
 type TrackHandler struct {
-	log             *slog.Logger
-	trackRepository repository.TrackStore
+	log          *slog.Logger
+	trackService service.TrackService
 }
 
-func NewTrackHandler(trackRepository *repository.TrackRepository, logger *slog.Logger) *TrackHandler {
-	return &TrackHandler{log: logger.With("component", "track_handler"), trackRepository: trackRepository}
+func NewTrackHandler(trackService service.TrackService, logger *slog.Logger) *TrackHandler {
+	return &TrackHandler{log: logger.With("component", "track_handler"), trackService: trackService}
 }
 
 // GetTracks godoc
@@ -28,13 +28,11 @@ func NewTrackHandler(trackRepository *repository.TrackRepository, logger *slog.L
 //	@Tags			tracks
 //	@Accept			json
 //	@Produce		json
-//	@Success		200
-//	@Failure		500
 //	@Router			/track [get]
 func (h *TrackHandler) GetTracks(c *gin.Context) {
 	var tracks []models.Track
 
-	rTracks, err := h.trackRepository.GetAll()
+	rTracks, err := h.trackService.GetAll()
 	if err != nil {
 		h.log.Error("Failed to fetch the track list", slog.Any("error", err))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
@@ -54,9 +52,6 @@ func (h *TrackHandler) GetTracks(c *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path		int	true	"Track ID"
-//	@Success		200	{object}	models.Track
-//	@Failure		404	{object}	map[string]string	"Id not found"
-//	@Failure		500	{object}	map[string]string	"Internal server error"
 //	@Router			/track/{id} [get]
 func (h *TrackHandler) GetTrack(c *gin.Context) {
 	req := struct {
@@ -68,7 +63,7 @@ func (h *TrackHandler) GetTrack(c *gin.Context) {
 		return
 	}
 
-	track, err := h.trackRepository.FindById(req.Id)
+	track, err := h.trackService.Get(req.Id)
 
 	if err == pg.ErrNoRows {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Track not found"})
@@ -92,8 +87,6 @@ func (h *TrackHandler) GetTrack(c *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			tracks	body	[]models.CreateTrackRequest	true	"Array of tracks to create"
-//	@Success		200
-//	@Failure		400
 //	@Router			/track [post]
 func (h *TrackHandler) CreateTracks(c *gin.Context) {
 	var req []models.CreateTrackRequest
@@ -116,7 +109,7 @@ func (h *TrackHandler) CreateTracks(c *gin.Context) {
 		tracks = append(tracks, &track)
 	}
 
-	err := h.trackRepository.BulkCreate(tracks)
+	err := h.trackService.BulkCreate(tracks)
 
 	if err != nil {
 		h.log.Error("Failed to bulk create tracks", slog.Any("error", err), slog.Any("request", req), slog.Any("parsed_tracks", tracks))
@@ -136,8 +129,6 @@ func (h *TrackHandler) CreateTracks(c *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			count	path	int	true	"Number of tracks to generate"
-//	@Success		200
-//	@Failure		400
 //	@Router			/track/populate/{count} [post]
 func (h *TrackHandler) PopulateTracks(c *gin.Context) {
 	req := struct {
@@ -162,7 +153,7 @@ func (h *TrackHandler) PopulateTracks(c *gin.Context) {
 		tracks = append(tracks, &track)
 	}
 
-	err := h.trackRepository.BulkCreate(tracks)
+	err := h.trackService.BulkCreate(tracks)
 
 	if err != nil {
 		h.log.Error("Failed to bulk create tracks during population", slog.Any("error", err), slog.Any("generated_tracks", tracks))
@@ -182,9 +173,6 @@ func (h *TrackHandler) PopulateTracks(c *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			track	body	models.UpdateTrackRequest	true	"Updated track data"
-//	@Success		200
-//	@Failure		400
-//	@Failure		500
 //	@Router			/track [put]
 func (h *TrackHandler) UpdateTrack(c *gin.Context) {
 	var req models.UpdateTrackRequest
@@ -202,7 +190,7 @@ func (h *TrackHandler) UpdateTrack(c *gin.Context) {
 		Genres:      req.Genres,
 	}
 
-	err := h.trackRepository.Update(&track)
+	err := h.trackService.Update(&track)
 	if err != nil {
 		h.log.Error("Failed to update the track", slog.Any("error", err), slog.Any("parsed_track", track))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
