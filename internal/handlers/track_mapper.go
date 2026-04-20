@@ -6,34 +6,44 @@ import (
 )
 
 func CreateToTrack(tr CreateTrackRequest) (*models.Track, error) {
-	releaseDate, err := time.Parse(time.DateTime, tr.ReleaseDate)
-	if err != nil {
-		return nil, err
+	track := &models.Track{
+		Name:   tr.Name,
+		Author: tr.Author,
+		Genres: tr.Genres,
 	}
 
-	track := &models.Track{
-		Name:        tr.Name,
-		Author:      tr.Author,
-		ReleaseDate: releaseDate,
-		Genres:      tr.Genres,
+	if tr.ReleaseDate != nil && *tr.ReleaseDate != "" {
+		releaseDate, err := time.Parse(time.DateTime, *tr.ReleaseDate)
+
+		if err != nil {
+			return nil, err
+		}
+
+		track.ReleaseDate = releaseDate
 	}
 
 	return track, nil
 }
 
 func UpdateToTrack(tr UpdateTrackRequest) (*models.Track, error) {
-	releaseDate, err := time.Parse(time.DateTime, tr.ReleaseDate)
-	if err != nil {
-		return nil, err
+	track := &models.Track{
+		Id:     tr.Id,
+		Name:   tr.Name,
+		Author: tr.Author,
+		Genres: tr.Genres,
 	}
 
-	return &models.Track{
-		Id:          tr.Id,
-		Name:        tr.Name,
-		Author:      tr.Author,
-		ReleaseDate: releaseDate,
-		Genres:      tr.Genres,
-	}, nil
+	if tr.ReleaseDate != nil && *tr.ReleaseDate != "" {
+		releaseDate, err := time.Parse(time.DateTime, *tr.ReleaseDate)
+
+		if err != nil {
+			return nil, err
+		}
+
+		track.ReleaseDate = releaseDate
+	}
+
+	return track, nil
 }
 
 func ToTrackResponse(t *models.Track) TrackResponse {
