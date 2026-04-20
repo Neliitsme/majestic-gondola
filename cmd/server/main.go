@@ -70,14 +70,18 @@ func main() {
 	tsvc := service.NewTrackService(tr, logger)
 	th := handlers.NewTrackHandler(tsvc, logger)
 
-	r.GET("/track", th.GetTracks)
-	r.GET("/track/:id", th.GetTrack)
-	r.POST("/track", th.CreateTracks)
-	r.POST("/track/populate/:count", th.PopulateTracks)
-	r.PUT("/track", th.UpdateTrack)
+	trackGroup := r.Group("/track")
+	{
+		trackGroup.GET("/", th.GetTracks)
+		trackGroup.GET("/:id", th.GetTrack)
+		trackGroup.POST("/", th.CreateTracks)
+		trackGroup.PUT("/", th.UpdateTrack)
+		trackGroup.POST("/populate/:count", th.PopulateTracks)
+	}
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+	// TODO: Graceful shutdown
 	if config.Address != "" {
 		r.Run(config.Address)
 	} else {
