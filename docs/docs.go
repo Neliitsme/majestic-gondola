@@ -36,7 +36,7 @@ const docTemplate = `{
         },
         "/track": {
             "get": {
-                "description": "Get all tracks or filter by ID via query parameter",
+                "description": "Get a list of all tracks in the database",
                 "consumes": [
                     "application/json"
                 ],
@@ -46,18 +46,30 @@ const docTemplate = `{
                 "tags": [
                     "tracks"
                 ],
-                "summary": "Get tracks",
+                "summary": "List tracks",
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/TrackResponse"
+                            }
+                        }
                     },
                     "500": {
-                        "description": "Internal Server Error"
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
                     }
                 }
             },
             "put": {
-                "description": "Update track details based on the provided JSON body",
+                "description": "Update the details of an existing track",
                 "consumes": [
                     "application/json"
                 ],
@@ -67,32 +79,44 @@ const docTemplate = `{
                 "tags": [
                     "tracks"
                 ],
-                "summary": "Update an existing track",
+                "summary": "Update a track",
                 "parameters": [
                     {
-                        "description": "Updated track data",
+                        "description": "Track update data",
                         "name": "track",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/majestic-gondola_internal_models.UpdateTrackRequest"
+                            "$ref": "#/definitions/UpdateTrackRequest"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "Updated"
                     },
                     "400": {
-                        "description": "Bad Request"
+                        "description": "Invalid request body",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
                     },
                     "500": {
-                        "description": "Internal Server Error"
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
                     }
                 }
             },
             "post": {
-                "description": "Bulk create tracks from a JSON array",
+                "description": "Create multiple tracks at once from a JSON array",
                 "consumes": [
                     "application/json"
                 ],
@@ -102,34 +126,49 @@ const docTemplate = `{
                 "tags": [
                     "tracks"
                 ],
-                "summary": "Create new tracks",
+                "summary": "Bulk create tracks",
                 "parameters": [
                     {
-                        "description": "Array of tracks to create",
+                        "description": "List of tracks to create",
                         "name": "tracks",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/majestic-gondola_internal_models.CreateTrackRequest"
+                                "$ref": "#/definitions/CreateTrackRequest"
                             }
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK"
+                    "201": {
+                        "description": "Created"
                     },
                     "400": {
-                        "description": "Bad Request"
+                        "description": "Invalid request body",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
                     }
                 }
             }
         },
         "/track/populate/{count}": {
             "post": {
-                "description": "Generate a specified number of dummy tracks for testing",
+                "description": "Generate random tracks for development testing",
                 "consumes": [
                     "application/json"
                 ],
@@ -137,9 +176,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "tracks"
+                    "dev"
                 ],
-                "summary": "Populate dummy tracks. Dev only.",
+                "summary": "Seed dummy data",
                 "parameters": [
                     {
                         "type": "integer",
@@ -150,18 +189,33 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK"
+                    "201": {
+                        "description": "Created"
                     },
                     "400": {
-                        "description": "Bad Request"
+                        "description": "Invalid count",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
                     }
                 }
             }
         },
         "/track/{id}": {
             "get": {
-                "description": "Retrieve a single music track from the database using its unique ID",
+                "description": "Retrieve a single track by its unique ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -171,7 +225,7 @@ const docTemplate = `{
                 "tags": [
                     "tracks"
                 ],
-                "summary": "Get a track by ID",
+                "summary": "Get a track",
                 "parameters": [
                     {
                         "type": "integer",
@@ -185,11 +239,20 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/majestic-gondola_internal_models.Track"
+                            "$ref": "#/definitions/TrackResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID format",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "404": {
-                        "description": "Id not found",
+                        "description": "Track not found",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -211,7 +274,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "majestic-gondola_internal_models.CreateTrackRequest": {
+        "CreateTrackRequest": {
             "type": "object",
             "required": [
                 "author",
@@ -219,71 +282,97 @@ const docTemplate = `{
             ],
             "properties": {
                 "author": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Queen"
                 },
                 "genres": {
                     "type": "array",
                     "items": {
                         "type": "string"
-                    }
+                    },
+                    "example": [
+                        "Rock",
+                        "Opera"
+                    ]
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Bohemian Rhapsody"
                 },
                 "release_date": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "1975-10-31 15:04:05"
                 }
             }
         },
-        "majestic-gondola_internal_models.Track": {
+        "TrackResponse": {
             "type": "object",
             "properties": {
                 "author": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Queen"
                 },
-                "createdAt": {
-                    "type": "string"
+                "created_at": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
                 },
                 "genres": {
                     "type": "array",
                     "items": {
                         "type": "string"
-                    }
+                    },
+                    "example": [
+                        "Rock",
+                        "Opera"
+                    ]
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Bohemian Rhapsody"
                 },
-                "releaseDate": {
-                    "type": "string"
+                "release_date": {
+                    "type": "string",
+                    "example": "1975-10-31 15:04:05"
                 }
             }
         },
-        "majestic-gondola_internal_models.UpdateTrackRequest": {
+        "UpdateTrackRequest": {
             "type": "object",
             "required": [
-                "id"
+                "author",
+                "id",
+                "name"
             ],
             "properties": {
                 "author": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Queen"
                 },
                 "genres": {
                     "type": "array",
                     "items": {
                         "type": "string"
-                    }
+                    },
+                    "example": [
+                        "Rock",
+                        "Opera"
+                    ]
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Bohemian Rhapsody"
                 },
                 "release_date": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "1975-10-31 15:04:05"
                 }
             }
         }

@@ -7,7 +7,7 @@ run: swag
 	go run $(MAIN_PATH)
 
 swag:
-	swag init -g $(MAIN_PATH) --parseDependency --dir ./,./internal/handlers,./internal/models
+	swag init -g $(MAIN_PATH) --parseDependency --dir ./,./internal/handlers --useStructName
 
 setup:
 	cp .env.example .env

@@ -1,54 +1,77 @@
 basePath: /
 definitions:
-  majestic-gondola_internal_models.CreateTrackRequest:
+  CreateTrackRequest:
     properties:
       author:
+        example: Queen
         type: string
       genres:
+        example:
+        - Rock
+        - Opera
         items:
           type: string
         type: array
       name:
+        example: Bohemian Rhapsody
         type: string
       release_date:
+        example: "1975-10-31 15:04:05"
         type: string
     required:
     - author
     - name
     type: object
-  majestic-gondola_internal_models.Track:
+  TrackResponse:
     properties:
       author:
+        example: Queen
         type: string
-      createdAt:
+      created_at:
+        example: "2006-01-02 15:04:05"
         type: string
       genres:
+        example:
+        - Rock
+        - Opera
         items:
           type: string
         type: array
       id:
+        example: 1
         type: integer
       name:
-        type: string
-      releaseDate:
-        type: string
-    type: object
-  majestic-gondola_internal_models.UpdateTrackRequest:
-    properties:
-      author:
-        type: string
-      genres:
-        items:
-          type: string
-        type: array
-      id:
-        type: integer
-      name:
+        example: Bohemian Rhapsody
         type: string
       release_date:
+        example: "1975-10-31 15:04:05"
+        type: string
+    type: object
+  UpdateTrackRequest:
+    properties:
+      author:
+        example: Queen
+        type: string
+      genres:
+        example:
+        - Rock
+        - Opera
+        items:
+          type: string
+        type: array
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Bohemian Rhapsody
+        type: string
+      release_date:
+        example: "1975-10-31 15:04:05"
         type: string
     required:
+    - author
     - id
+    - name
     type: object
 externalDocs:
   description: OpenAPI
@@ -78,69 +101,94 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get all tracks or filter by ID via query parameter
+      description: Get a list of all tracks in the database
       produces:
       - application/json
       responses:
         "200":
           description: OK
+          schema:
+            items:
+              $ref: '#/definitions/TrackResponse'
+            type: array
         "500":
-          description: Internal Server Error
-      summary: Get tracks
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List tracks
       tags:
       - tracks
     post:
       consumes:
       - application/json
-      description: Bulk create tracks from a JSON array
+      description: Create multiple tracks at once from a JSON array
       parameters:
-      - description: Array of tracks to create
+      - description: List of tracks to create
         in: body
         name: tracks
         required: true
         schema:
           items:
-            $ref: '#/definitions/majestic-gondola_internal_models.CreateTrackRequest'
+            $ref: '#/definitions/CreateTrackRequest'
           type: array
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
         "400":
-          description: Bad Request
-      summary: Create new tracks
+          description: Invalid request body
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Bulk create tracks
       tags:
       - tracks
     put:
       consumes:
       - application/json
-      description: Update track details based on the provided JSON body
+      description: Update the details of an existing track
       parameters:
-      - description: Updated track data
+      - description: Track update data
         in: body
         name: track
         required: true
         schema:
-          $ref: '#/definitions/majestic-gondola_internal_models.UpdateTrackRequest'
+          $ref: '#/definitions/UpdateTrackRequest'
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Updated
         "400":
-          description: Bad Request
+          description: Invalid request body
+          schema:
+            additionalProperties:
+              type: string
+            type: object
         "500":
-          description: Internal Server Error
-      summary: Update an existing track
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update a track
       tags:
       - tracks
   /track/{id}:
     get:
       consumes:
       - application/json
-      description: Retrieve a single music track from the database using its unique
-        ID
+      description: Retrieve a single track by its unique ID
       parameters:
       - description: Track ID
         in: path
@@ -153,9 +201,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/majestic-gondola_internal_models.Track'
+            $ref: '#/definitions/TrackResponse'
+        "400":
+          description: Invalid ID format
+          schema:
+            additionalProperties:
+              type: string
+            type: object
         "404":
-          description: Id not found
+          description: Track not found
           schema:
             additionalProperties:
               type: string
@@ -166,14 +220,14 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Get a track by ID
+      summary: Get a track
       tags:
       - tracks
   /track/populate/{count}:
     post:
       consumes:
       - application/json
-      description: Generate a specified number of dummy tracks for testing
+      description: Generate random tracks for development testing
       parameters:
       - description: Number of tracks to generate
         in: path
@@ -183,11 +237,21 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
         "400":
-          description: Bad Request
-      summary: Populate dummy tracks. Dev only.
+          description: Invalid count
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Seed dummy data
       tags:
-      - tracks
+      - dev
 swagger: "2.0"
