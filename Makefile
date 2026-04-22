@@ -1,7 +1,7 @@
 MAIN_PATH=./cmd/server/main.go
 BINARY_NAME=server
 
-.PHONY: run swag setup build clean
+.PHONY: *
 
 run: swag
 	go run $(MAIN_PATH)
@@ -17,3 +17,6 @@ build:
 
 clean:
 	rm -f $(BINARY_NAME)
+
+test:
+	go test -v ./...
