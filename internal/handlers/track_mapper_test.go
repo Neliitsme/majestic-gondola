@@ -119,7 +119,7 @@ func TestUpdateToTrack(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			track, err := handlers.UpdateToTrack(test.input)
+			track, err := handlers.UpdateToTrack(1, test.input)
 			if test.wantErr {
 				assert.Error(err)
 				assert.Nil(track)

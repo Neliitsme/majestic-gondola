@@ -59,9 +59,7 @@ func (h *TrackHandler) GetTracks(c *gin.Context) {
 //	@Failure		500	{object}	map[string]string	"Internal server error"
 //	@Router			/track/{id} [get]
 func (h *TrackHandler) GetTrack(c *gin.Context) {
-	req := struct {
-		Id int `uri:"id" binding:"required"`
-	}{}
+	var req IdUriRequest
 
 	if err := c.ShouldBindUri(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -164,22 +162,29 @@ func (h *TrackHandler) PopulateTracks(c *gin.Context) {
 //	@Tags			tracks
 //	@Accept			json
 //	@Produce		json
+//	@Param			id		path	int					true	"Track ID"
 //	@Param			track	body	UpdateTrackRequest	true	"Track update data"
 //	@Success		200		"Updated"
 //	@Failure		400		{object}	map[string]string	"Invalid request body"
 //	@Failure		500		{object}	map[string]string	"Internal server error"
-//	@Router			/track [put]
+//	@Router			/track/{id} [put]
 func (h *TrackHandler) UpdateTrack(c *gin.Context) {
-	var req UpdateTrackRequest
+	var uri IdUriRequest
+	var body UpdateTrackRequest
 
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err := c.ShouldBindUri(&uri); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	track, err := UpdateToTrack(req)
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	track, err := UpdateToTrack(uri.Id, body)
 	if err != nil {
-		h.log.Error("Failed to map Update to Track", slog.Any("error", err), slog.Any("track_request", req))
+		h.log.Error("Failed to map Update to Track", slog.Any("error", err), slog.Int("track_id", uri.Id), slog.Any("track_request", body))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Error while trying to parse the request"})
 		return
 	}

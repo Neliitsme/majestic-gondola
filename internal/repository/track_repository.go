@@ -41,6 +41,7 @@ func (r *trackRepository) BulkCreate(tracks []*models.Track) error {
 	return err
 }
 
+// TODO: make a custom error when no rows are affected
 func (r *trackRepository) Update(track *models.Track) error {
 	_, err := r.db.Model(track).ExcludeColumn("created_at").WherePK().Update()
 	r.log.Info("Finished Update")

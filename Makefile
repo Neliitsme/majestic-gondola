@@ -7,6 +7,7 @@ run: swag
 	go run $(MAIN_PATH)
 
 swag:
+	swag fmt
 	swag init -g $(MAIN_PATH) --parseDependency --dir ./,./internal/handlers --useStructName
 
 setup:

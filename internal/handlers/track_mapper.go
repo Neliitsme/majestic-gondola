@@ -25,9 +25,9 @@ func CreateToTrack(tr CreateTrackRequest) (*models.Track, error) {
 	return track, nil
 }
 
-func UpdateToTrack(tr UpdateTrackRequest) (*models.Track, error) {
+func UpdateToTrack(id int, tr UpdateTrackRequest) (*models.Track, error) {
 	track := &models.Track{
-		Id:     tr.Id,
+		Id:     id,
 		Name:   tr.Name,
 		Author: tr.Author,
 		Genres: tr.Genres,
