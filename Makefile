@@ -8,7 +8,7 @@ run: swag
 
 swag:
 	swag fmt
-	swag init -g $(MAIN_PATH) --parseDependency --dir ./,./internal/handlers --useStructName
+	swag init -g $(MAIN_PATH) --parseDependency --dir ./,./internal/handlers --useStructName -q
 
 setup:
 	cp .env.example .env

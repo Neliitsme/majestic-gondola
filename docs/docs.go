@@ -15,16 +15,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/ping": {
-            "get": {
-                "description": "get pong",
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Ping service",
-                "responses": {}
-            }
-        },
         "/track": {
             "get": {
                 "description": "Get a list of all tracks in the database",

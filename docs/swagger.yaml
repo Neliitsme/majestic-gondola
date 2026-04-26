@@ -85,13 +85,6 @@ info:
   title: Majestic gondola API
   version: "1.0"
 paths:
-  /ping:
-    get:
-      description: get pong
-      produces:
-      - application/json
-      responses: {}
-      summary: Ping service
   /track:
     get:
       consumes:

@@ -2,7 +2,6 @@ package bootstrap
 
 import (
 	"fmt"
-	"log/slog"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
@@ -11,9 +10,10 @@ import (
 type Config struct {
 	PostgresUrl string `mapstructure:"POSTGRES_URL" validate:"required"`
 	Address     string `mapstructure:"ADDRESS"`
+	LogLevel    string `mapstructure:"LOG_LEVEL"`
 }
 
-func LoadConfig(l *slog.Logger) *Config {
+func LoadConfig() *Config {
 	var config Config
 	viper.SetConfigFile(".env")
 	viper.ReadInConfig()
@@ -24,10 +24,6 @@ func LoadConfig(l *slog.Logger) *Config {
 
 	if err := validator.New().Struct(&config); err != nil {
 		panic(fmt.Errorf("config validation error: %w", err))
-	}
-
-	if l != nil {
-		l.Info("Loaded config successfully.")
 	}
 
 	return &config

@@ -3,6 +3,7 @@ package main
 import (
 	"log/slog"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files" // swagger embed files
@@ -25,22 +26,23 @@ import (
 //	@host		localhost:8080
 //	@BasePath	/
 
-//	@externalDocs.description	OpenAPI
-//	@externalDocs.url			https://swagger.io/resources/open-api/
-
-// main godoc
-//
-//	@Summary		Ping service
-//	@Description	get pong
-//	@Produce		json
-//	@Router			/ping [get]
+// @externalDocs.description	OpenAPI
+// @externalDocs.url			https://swagger.io/resources/open-api/
 func main() {
-	// Set up logger
-	logger := slog.New(slog.Default().Handler())
-	slog.SetDefault(logger)
-
 	// Set up configs
-	config := bootstrap.LoadConfig(logger)
+	config := bootstrap.LoadConfig()
+
+	// Set logger level from config
+	var logLevel slog.Level
+
+	if err := logLevel.UnmarshalText([]byte(config.LogLevel)); err != nil {
+		logLevel = slog.LevelInfo
+	}
+
+	// Set up logger
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: &logLevel}))
+	slog.SetDefault(logger)
+	logger.Info("Log level is set", slog.Any("Log level", logLevel))
 
 	// Set up db connection
 	db := bootstrap.NewDbConnection(config, logger)
@@ -48,14 +50,9 @@ func main() {
 
 	// Set up web app
 	r := gin.New()
+	r.SetTrustedProxies(nil)
 	r.Use(bootstrap.SlogMiddleware(logger))
 	r.Use(gin.Recovery())
-
-	r.GET("/ping", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{
-			"message": "Pong",
-		})
-	})
 
 	// Set up dependencies
 	tr := repository.NewTrackRepository(db, logger)
@@ -71,6 +68,9 @@ func main() {
 		trackGroup.POST("/populate/:count", th.PopulateTracks)
 	}
 
+	r.GET("/swagger", func(c *gin.Context) {
+		c.Redirect(http.StatusMovedPermanently, "/swagger/index.html")
+	})
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// TODO: Graceful shutdown
