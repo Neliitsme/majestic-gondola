@@ -9,7 +9,8 @@ import (
 
 type Config struct {
 	PostgresUrl string `mapstructure:"POSTGRES_URL" validate:"required"`
-	Address     string `mapstructure:"ADDRESS"`
+	Host        string `mapstructure:"HOST" validate:"required"`
+	Port        int    `mapstructure:"PORT" validate:"required"`
 	LogLevel    string `mapstructure:"LOG_LEVEL"`
 }
 
