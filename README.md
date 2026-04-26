@@ -24,7 +24,7 @@ docker compose up -d
 
 *Unless* you modify anything credential-sensitive, the example file has valid strings and keys to get this app up and running. It's a test project after all.
 ```sh
-cp .env.example .env
+make init
 ```
 
 3. cd into the `migartion` folder and restore the database schema with
@@ -36,10 +36,10 @@ go run .
 
 4. Start the app from the project's root with
 ```sh
-go run ./cmd/server
+make
 ```
 
 (Optionally) generate the swag docs with the following command. You only need to do it if you modify the API. Otherwise the up-to-date docs are present in the `/docs` folder and should be accessible by going to `<host>:<port>/swagger/index.html` when you run the app.
 ```sh
-swag init -g cmd/server/main.go --parseDependency --dir ./,./internal/handlers,./internal/models
+make swag
 ```
