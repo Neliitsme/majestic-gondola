@@ -22,6 +22,12 @@ definitions:
     - author
     - name
     type: object
+  ErrorResponse:
+    properties:
+      message:
+        example: error
+        type: string
+    type: object
   TrackResponse:
     properties:
       author:
@@ -103,9 +109,7 @@ paths:
         "500":
           description: Internal server error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/ErrorResponse'
       summary: List tracks
       tags:
       - tracks
@@ -130,15 +134,11 @@ paths:
         "400":
           description: Invalid request body
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/ErrorResponse'
         "500":
           description: Internal server error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/ErrorResponse'
       summary: Bulk create tracks
       tags:
       - tracks
@@ -163,21 +163,15 @@ paths:
         "400":
           description: Invalid ID format
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/ErrorResponse'
         "404":
           description: Track not found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/ErrorResponse'
         "500":
           description: Internal server error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/ErrorResponse'
       summary: Get a track
       tags:
       - tracks
@@ -205,15 +199,11 @@ paths:
         "400":
           description: Invalid request body
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/ErrorResponse'
         "500":
           description: Internal server error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/ErrorResponse'
       summary: Update a track
       tags:
       - tracks
@@ -236,15 +226,11 @@ paths:
         "400":
           description: Invalid count
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/ErrorResponse'
         "500":
           description: Internal server error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/ErrorResponse'
       summary: Seed dummy data
       tags:
       - dev

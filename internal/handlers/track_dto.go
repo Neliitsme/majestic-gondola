@@ -22,7 +22,3 @@ type TrackResponse struct {
 	Genres      []string `json:"genres" example:"Rock,Opera"`
 	CreatedAt   string   `json:"created_at" example:"2006-01-02 15:04:05"`
 }
-
-type IdUriRequest struct {
-	Id int `uri:"id" binding:"required"`
-}
