@@ -1,5 +1,7 @@
 package handlers
 
-type ErrorResponse struct {
+type ErrResponse struct {
 	Message string `json:"message" example:"error"`
 }
+
+var ErrInternalMsg = "Internal server error"

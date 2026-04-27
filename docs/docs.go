@@ -41,7 +41,7 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/ErrorResponse"
+                            "$ref": "#/definitions/ErrResponse"
                         }
                     }
                 }
@@ -79,13 +79,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Invalid request body",
                         "schema": {
-                            "$ref": "#/definitions/ErrorResponse"
+                            "$ref": "#/definitions/ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/ErrorResponse"
+                            "$ref": "#/definitions/ErrResponse"
                         }
                     }
                 }
@@ -120,13 +120,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Invalid count",
                         "schema": {
-                            "$ref": "#/definitions/ErrorResponse"
+                            "$ref": "#/definitions/ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/ErrorResponse"
+                            "$ref": "#/definitions/ErrResponse"
                         }
                     }
                 }
@@ -164,19 +164,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Invalid ID format",
                         "schema": {
-                            "$ref": "#/definitions/ErrorResponse"
+                            "$ref": "#/definitions/ErrResponse"
                         }
                     },
                     "404": {
                         "description": "Track not found",
                         "schema": {
-                            "$ref": "#/definitions/ErrorResponse"
+                            "$ref": "#/definitions/ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/ErrorResponse"
+                            "$ref": "#/definitions/ErrResponse"
                         }
                     }
                 }
@@ -218,13 +218,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Invalid request body",
                         "schema": {
-                            "$ref": "#/definitions/ErrorResponse"
+                            "$ref": "#/definitions/ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/ErrorResponse"
+                            "$ref": "#/definitions/ErrResponse"
                         }
                     }
                 }
@@ -263,7 +263,7 @@ const docTemplate = `{
                 }
             }
         },
-        "ErrorResponse": {
+        "ErrResponse": {
             "type": "object",
             "properties": {
                 "message": {

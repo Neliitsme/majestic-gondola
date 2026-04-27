@@ -21,7 +21,7 @@ definitions:
     - author
     - name
     type: object
-  ErrorResponse:
+  ErrResponse:
     properties:
       message:
         example: error
@@ -100,7 +100,7 @@ paths:
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/ErrResponse'
       summary: List tracks
       tags:
       - tracks
@@ -125,11 +125,11 @@ paths:
         "400":
           description: Invalid request body
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/ErrResponse'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/ErrResponse'
       summary: Bulk create tracks
       tags:
       - tracks
@@ -154,15 +154,15 @@ paths:
         "400":
           description: Invalid ID format
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/ErrResponse'
         "404":
           description: Track not found
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/ErrResponse'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/ErrResponse'
       summary: Get a track
       tags:
       - tracks
@@ -190,11 +190,11 @@ paths:
         "400":
           description: Invalid request body
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/ErrResponse'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/ErrResponse'
       summary: Update a track
       tags:
       - tracks
@@ -217,11 +217,11 @@ paths:
         "400":
           description: Invalid count
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/ErrResponse'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/ErrResponse'
       summary: Seed dummy data
       tags:
       - dev

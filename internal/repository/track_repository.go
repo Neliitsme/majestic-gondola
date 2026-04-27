@@ -1,7 +1,9 @@
 package repository
 
 import (
+	"errors"
 	"log/slog"
+	"majestic-gondola/internal/apperr"
 	"majestic-gondola/internal/models"
 
 	"github.com/go-pg/pg/v10"
@@ -26,24 +28,50 @@ func NewTrackRepository(db *pg.DB, logger *slog.Logger) TrackRepository {
 func (r *trackRepository) FindById(id int) (*models.Track, error) {
 	track := new(models.Track)
 	err := r.db.Model(track).Where("id = ?", id).Select()
-	return track, err
+
+	if err != nil {
+		if errors.Is(err, pg.ErrNoRows) {
+			return nil, apperr.ErrNotFound
+		}
+		return nil, err
+	}
+
+	return track, nil
 }
 
 func (r *trackRepository) GetAll() ([]models.Track, error) {
 	var tracks []models.Track
 	err := r.db.Model(&tracks).Select()
-	return tracks, err
+
+	if err != nil {
+		return nil, err
+	}
+
+	return tracks, nil
 }
 
 func (r *trackRepository) BulkCreate(tracks []*models.Track) error {
 	_, err := r.db.Model(&tracks).Insert()
-	r.log.Info("Finished BulkCreate")
-	return err
+
+	if err != nil {
+		return err
+	}
+
+	r.log.Info("Finished creating tracks")
+	return nil
 }
 
-// TODO: make a custom error when no rows are affected
 func (r *trackRepository) Update(track *models.Track) error {
-	_, err := r.db.Model(track).ExcludeColumn("created_at").WherePK().Update()
-	r.log.Info("Finished Update")
-	return err
+	res, err := r.db.Model(track).ExcludeColumn("created_at").WherePK().Update()
+
+	if err != nil {
+		return err
+	}
+
+	if res.RowsAffected() == 0 {
+		return apperr.ErrNotFound
+	}
+
+	r.log.Info("Finished updating track")
+	return nil
 }
