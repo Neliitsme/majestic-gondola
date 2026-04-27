@@ -34,7 +34,7 @@ func (h *TrackHandler) GetTracks(c *gin.Context) {
 	tracks, err := h.trackService.GetAll()
 	if err != nil {
 		h.log.Error("Failed to fetch the track list", slog.Any("error", err))
-		c.JSON(http.StatusInternalServerError, ErrResponse{Message: ErrInternalMsg})
+		c.JSON(http.StatusInternalServerError, InternalErrResponse)
 		return
 	}
 
@@ -74,7 +74,7 @@ func (h *TrackHandler) GetTrack(c *gin.Context) {
 			c.JSON(appErr.Code, ErrResponse{Message: appErr.Message})
 			return
 		}
-		c.JSON(http.StatusInternalServerError, ErrResponse{Message: ErrInternalMsg})
+		c.JSON(http.StatusInternalServerError, InternalErrResponse)
 		return
 	}
 
@@ -115,7 +115,7 @@ func (h *TrackHandler) CreateTracks(c *gin.Context) {
 	err := h.trackService.BulkCreate(tracks)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, ErrResponse{Message: ErrInternalMsg})
+		c.JSON(http.StatusInternalServerError, InternalErrResponse)
 		return
 	}
 
@@ -147,7 +147,7 @@ func (h *TrackHandler) PopulateTracks(c *gin.Context) {
 	err := h.trackService.Generate(req.Count)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, ErrResponse{Message: ErrInternalMsg})
+		c.JSON(http.StatusInternalServerError, InternalErrResponse)
 		return
 	}
 
@@ -194,7 +194,7 @@ func (h *TrackHandler) UpdateTrack(c *gin.Context) {
 			c.JSON(appErr.Code, ErrResponse{Message: appErr.Message})
 			return
 		}
-		c.JSON(http.StatusInternalServerError, ErrResponse{Message: ErrInternalMsg})
+		c.JSON(http.StatusInternalServerError, InternalErrResponse)
 		return
 	}
 
