@@ -198,5 +198,5 @@ func (h *TrackHandler) UpdateTrack(c *gin.Context) {
 		return
 	}
 
-	c.Status(http.StatusOK)
+	c.Status(http.StatusNoContent)
 }

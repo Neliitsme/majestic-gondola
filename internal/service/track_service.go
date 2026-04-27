@@ -35,7 +35,7 @@ func (s *trackService) Get(id int) (*models.Track, error) {
 			return nil, apperr.NotFound("Track not found", err)
 		}
 		s.log.Error("Failed to fetch a track by id", slog.Any("error", err), slog.Int("id", id))
-		return nil, err
+		return nil, apperr.Internal(err)
 	}
 
 	return track, nil
@@ -46,7 +46,7 @@ func (s *trackService) GetAll() ([]models.Track, error) {
 
 	if err != nil {
 		s.log.Error("Failed to fetch tracks", slog.Any("error", err))
-		return nil, err
+		return nil, apperr.Internal(err)
 	}
 
 	return tracks, nil
@@ -60,7 +60,7 @@ func (s *trackService) BulkCreate(tracks []*models.Track) error {
 		return apperr.Internal(err)
 	}
 
-	s.log.Info("Created a new track")
+	s.log.Info("Bulk created tracks", slog.Int("count", len(tracks)))
 	return nil
 }
 
@@ -93,13 +93,5 @@ func (s *trackService) Generate(count int) error {
 		tracks = append(tracks, track)
 	}
 
-	err := s.trackRepository.BulkCreate(tracks)
-
-	if err != nil {
-		s.log.Error("Failed to bulk create tracks during population", slog.Any("error", err), slog.Int("generated_tracks", len(tracks)))
-		return apperr.Internal(err)
-	}
-
-	s.log.Info("Created several new tracks")
-	return nil
+	return s.BulkCreate(tracks)
 }
