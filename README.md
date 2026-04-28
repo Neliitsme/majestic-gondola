@@ -4,6 +4,12 @@ A project to learn how to wield the power of golang.
 ## Topic
 Some service that works with data related to music. Nothing too exciting. Like names, genres, authors, etc.
 
+Current plan is to make some cron service that would start some goroutines to process unprocessed reviews and update the tracks and authors scores
+
+## DB schema
+
+![DB schema](media/diagram.png)
+
 ## Plans
 - [x] A simple CRUD with a few entities related to each other
 - [ ] Write some business logic
