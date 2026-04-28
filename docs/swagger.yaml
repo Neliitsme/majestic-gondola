@@ -1,9 +1,9 @@
 definitions:
   CreateTrackRequest:
     properties:
-      author:
-        example: Queen
-        type: string
+      artist_id:
+        example: 1
+        type: integer
       genres:
         example:
         - Rock
@@ -18,7 +18,6 @@ definitions:
         example: "1975-10-31 15:04:05"
         type: string
     required:
-    - author
     - name
     type: object
   ErrResponse:
@@ -27,11 +26,17 @@ definitions:
         example: error
         type: string
     type: object
+  PopulateRequest:
+    properties:
+      artist_id:
+        example: 1
+        type: integer
+    type: object
   TrackResponse:
     properties:
       author:
-        example: Queen
-        type: string
+        example: 1
+        type: integer
       created_at:
         example: "2006-01-02 15:04:05"
         type: string
@@ -51,12 +56,15 @@ definitions:
       release_date:
         example: "1975-10-31 15:04:05"
         type: string
+      score:
+        example: 100
+        type: integer
     type: object
   UpdateTrackRequest:
     properties:
-      author:
-        example: Queen
-        type: string
+      artist_id:
+        example: 1
+        type: integer
       genres:
         example:
         - Rock
@@ -71,7 +79,6 @@ definitions:
         example: "1975-10-31 15:04:05"
         type: string
     required:
-    - author
     - name
     type: object
 externalDocs:
@@ -209,6 +216,11 @@ paths:
         name: count
         required: true
         type: integer
+      - description: Populate data
+        in: body
+        name: track
+        schema:
+          $ref: '#/definitions/PopulateRequest'
       produces:
       - application/json
       responses:

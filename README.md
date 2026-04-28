@@ -5,11 +5,20 @@ A project to learn how to wield the power of golang.
 Some service that works with data related to music. Nothing too exciting. Like names, genres, authors, etc.
 
 ## Plans
-- [ ] A simple CRUD with a few entities related to each other
+- [x] A simple CRUD with a few entities related to each other
 - [ ] Write some business logic
+- [ ] Write some frontend
+- [ ] Add in-memory cache
+- [ ] Try zenrpc
 - [ ] Communicate with other APIs ?
 - [ ] Break down the app into microservices ?
 - [ ] (Impossible) Fix the perpetual TODOs
+
+## Dependencies/Tech
+
+- go 1.26.2
+- Docker (postgres:18.3-bookworm)
+- [golang-migrate](https://github.com/golang-migrate/migrate) for managing migrations
 
 ## Usage
 
@@ -27,14 +36,12 @@ docker compose up -d
 make init
 ```
 
-3. cd into the `migartion` folder and restore the database schema with
+3. Restore the database schema with
 ```sh
-go run . usage # check the list of available commands
-go run . init
-go run .
+make mup
 ```
 
-4. Start the app from the project's root with
+4. Start the app with
 ```sh
 make
 ```

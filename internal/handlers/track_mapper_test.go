@@ -23,7 +23,7 @@ func TestToTrackResponse(t *testing.T) {
 			input: models.Track{
 				Id:          1,
 				Name:        "Test",
-				Author:      "Test",
+				ArtistId:    new(1),
 				ReleaseDate: time.Date(2006, 01, 02, 15, 04, 05, 06, time.UTC),
 				Genres:      []string{"Test"},
 				CreatedAt:   time.Now(),

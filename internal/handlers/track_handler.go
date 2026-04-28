@@ -129,22 +129,29 @@ func (h *TrackHandler) CreateTracks(c *gin.Context) {
 //	@Tags			dev
 //	@Accept			json
 //	@Produce		json
-//	@Param			count	path	int	true	"Number of tracks to generate"
+//	@Param			count	path	int				true	"Number of tracks to generate"
+//	@Param			track	body	PopulateRequest	false	"Populate data"
 //	@Success		201		"Created"
 //	@Failure		400		{object}	ErrResponse	"Invalid count"
 //	@Failure		500		{object}	ErrResponse	"Internal server error"
 //	@Router			/track/populate/{count} [post]
 func (h *TrackHandler) PopulateTracks(c *gin.Context) {
-	req := struct {
+	uri := struct {
 		Count int `uri:"count" binding:"required"`
 	}{}
+	var body PopulateRequest
 
-	if err := c.ShouldBindUri(&req); err != nil {
+	if err := c.ShouldBindUri(&uri); err != nil {
 		c.JSON(http.StatusBadRequest, ErrResponse{Message: err.Error()})
 		return
 	}
 
-	err := h.trackService.Generate(req.Count)
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, ErrResponse{Message: err.Error()})
+		return
+	}
+
+	err := h.trackService.Generate(uri.Count, body.ArtistId)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, InternalErrResponse)

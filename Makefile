@@ -1,5 +1,8 @@
+include .env
+
 MAIN_PATH=./cmd/server/main.go
 BINARY_NAME=server
+MIGRATIONS_PATH=./db/migrations
 
 .PHONY: *
 
@@ -21,3 +24,9 @@ clean:
 
 test:
 	go test -v ./...
+
+mup:
+	migrate -database ${POSTGRES_URL} -path ${MIGRATIONS_PATH} up
+
+mdown:
+	migrate -database ${POSTGRES_URL} -path ${MIGRATIONS_PATH} down

@@ -15,7 +15,7 @@ type TrackService interface {
 	GetAll() ([]models.Track, error)
 	BulkCreate(tracks []*models.Track) error
 	Update(track *models.Track) error
-	Generate(count int) error
+	Generate(count int, artistId *int) error
 }
 
 type trackService struct {
@@ -79,13 +79,13 @@ func (s *trackService) Update(track *models.Track) error {
 	return nil
 }
 
-func (s *trackService) Generate(count int) error {
+func (s *trackService) Generate(count int, artistId *int) error {
 
 	tracks := make([]*models.Track, 0, count)
 	for i := range count {
 		track := &models.Track{
 			Name:        fmt.Sprintf("Track %d", i),
-			Author:      fmt.Sprintf("Author %d", i),
+			ArtistId:    artistId,
 			ReleaseDate: time.Now(),
 			Genres:      []string{"Tag"},
 		}

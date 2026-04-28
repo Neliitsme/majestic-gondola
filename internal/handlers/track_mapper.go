@@ -7,9 +7,9 @@ import (
 
 func CreateToTrack(tr CreateTrackRequest) (*models.Track, error) {
 	track := &models.Track{
-		Name:   tr.Name,
-		Author: tr.Author,
-		Genres: tr.Genres,
+		Name:     tr.Name,
+		ArtistId: tr.ArtistId,
+		Genres:   tr.Genres,
 	}
 
 	if tr.ReleaseDate != nil && *tr.ReleaseDate != "" {
@@ -27,10 +27,10 @@ func CreateToTrack(tr CreateTrackRequest) (*models.Track, error) {
 
 func UpdateToTrack(id int, tr UpdateTrackRequest) (*models.Track, error) {
 	track := &models.Track{
-		Id:     id,
-		Name:   tr.Name,
-		Author: tr.Author,
-		Genres: tr.Genres,
+		Id:       id,
+		Name:     tr.Name,
+		ArtistId: tr.ArtistId,
+		Genres:   tr.Genres,
 	}
 
 	if tr.ReleaseDate != nil && *tr.ReleaseDate != "" {
@@ -50,7 +50,7 @@ func ToTrackResponse(t *models.Track) TrackResponse {
 	return TrackResponse{
 		Id:          t.Id,
 		Name:        t.Name,
-		Author:      t.Author,
+		ArtistId:    t.ArtistId,
 		ReleaseDate: t.ReleaseDate.Format(time.DateTime),
 		Genres:      t.Genres,
 		CreatedAt:   t.CreatedAt.Format(time.DateTime),

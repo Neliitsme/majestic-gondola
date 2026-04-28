@@ -111,6 +111,14 @@ const docTemplate = `{
                         "name": "count",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Populate data",
+                        "name": "track",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/PopulateRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -235,13 +243,12 @@ const docTemplate = `{
         "CreateTrackRequest": {
             "type": "object",
             "required": [
-                "author",
                 "name"
             ],
             "properties": {
-                "author": {
-                    "type": "string",
-                    "example": "Queen"
+                "artist_id": {
+                    "type": "integer",
+                    "example": 1
                 },
                 "genres": {
                     "type": "array",
@@ -272,12 +279,21 @@ const docTemplate = `{
                 }
             }
         },
+        "PopulateRequest": {
+            "type": "object",
+            "properties": {
+                "artist_id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
         "TrackResponse": {
             "type": "object",
             "properties": {
                 "author": {
-                    "type": "string",
-                    "example": "Queen"
+                    "type": "integer",
+                    "example": 1
                 },
                 "created_at": {
                     "type": "string",
@@ -304,19 +320,22 @@ const docTemplate = `{
                 "release_date": {
                     "type": "string",
                     "example": "1975-10-31 15:04:05"
+                },
+                "score": {
+                    "type": "integer",
+                    "example": 100
                 }
             }
         },
         "UpdateTrackRequest": {
             "type": "object",
             "required": [
-                "author",
                 "name"
             ],
             "properties": {
-                "author": {
-                    "type": "string",
-                    "example": "Queen"
+                "artist_id": {
+                    "type": "integer",
+                    "example": 1
                 },
                 "genres": {
                     "type": "array",
