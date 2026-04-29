@@ -1,11 +1,12 @@
-package handlers
+package mappers
 
 import (
+	"majestic-gondola/internal/dto"
 	"majestic-gondola/internal/models"
 	"time"
 )
 
-func CreateToTrack(tr CreateTrackRequest) (*models.Track, error) {
+func CreateToTrack(tr dto.CreateTrackRequest) (*models.Track, error) {
 	track := &models.Track{
 		Name:     tr.Name,
 		ArtistId: tr.ArtistId,
@@ -25,7 +26,7 @@ func CreateToTrack(tr CreateTrackRequest) (*models.Track, error) {
 	return track, nil
 }
 
-func UpdateToTrack(id int, tr UpdateTrackRequest) (*models.Track, error) {
+func UpdateToTrack(id int, tr dto.UpdateTrackRequest) (*models.Track, error) {
 	track := &models.Track{
 		Id:       id,
 		Name:     tr.Name,
@@ -46,8 +47,8 @@ func UpdateToTrack(id int, tr UpdateTrackRequest) (*models.Track, error) {
 	return track, nil
 }
 
-func ToTrackResponse(t *models.Track) TrackResponse {
-	return TrackResponse{
+func ToTrackResponse(t *models.Track) dto.TrackResponse {
+	return dto.TrackResponse{
 		Id:          t.Id,
 		Name:        t.Name,
 		ArtistId:    t.ArtistId,

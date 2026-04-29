@@ -1,7 +1,8 @@
-package handlers_test
+package mappers_test
 
 import (
-	"majestic-gondola/internal/handlers"
+	"majestic-gondola/internal/dto"
+	"majestic-gondola/internal/mappers"
 	"majestic-gondola/internal/models"
 	"testing"
 	"time"
@@ -42,7 +43,7 @@ func TestToTrackResponse(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			track := handlers.ToTrackResponse(&test.input)
+			track := mappers.ToTrackResponse(&test.input)
 			require.NotNil(t, track)
 			assert.Equal(test.input.Id, track.Id)
 			assert.Equal(test.input.Name, track.Name)
@@ -56,12 +57,12 @@ func TestCreateToTrack(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		input   handlers.CreateTrackRequest
+		input   dto.CreateTrackRequest
 		wantErr bool
 	}{
 		{
 			name: "Valid request",
-			input: handlers.CreateTrackRequest{
+			input: dto.CreateTrackRequest{
 				Name:        "Song",
 				ReleaseDate: new("2026-04-20 20:00:00"),
 			},
@@ -69,7 +70,7 @@ func TestCreateToTrack(t *testing.T) {
 		},
 		{
 			name: "Invalid date format",
-			input: handlers.CreateTrackRequest{
+			input: dto.CreateTrackRequest{
 				Name:        "Song",
 				ReleaseDate: new("invalid-date"),
 			},
@@ -79,7 +80,7 @@ func TestCreateToTrack(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			track, err := handlers.CreateToTrack(test.input)
+			track, err := mappers.CreateToTrack(test.input)
 			if test.wantErr {
 				assert.Error(err)
 				assert.Nil(track)
@@ -96,12 +97,12 @@ func TestUpdateToTrack(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		input   handlers.UpdateTrackRequest
+		input   dto.UpdateTrackRequest
 		wantErr bool
 	}{
 		{
 			name: "Valid request",
-			input: handlers.UpdateTrackRequest{
+			input: dto.UpdateTrackRequest{
 				Name:        "Song",
 				ReleaseDate: new("2026-04-20 20:00:00"),
 			},
@@ -109,7 +110,7 @@ func TestUpdateToTrack(t *testing.T) {
 		},
 		{
 			name: "Invalid date format",
-			input: handlers.UpdateTrackRequest{
+			input: dto.UpdateTrackRequest{
 				Name:        "Song",
 				ReleaseDate: new("invalid-date"),
 			},
@@ -119,7 +120,7 @@ func TestUpdateToTrack(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			track, err := handlers.UpdateToTrack(1, test.input)
+			track, err := mappers.UpdateToTrack(1, test.input)
 			if test.wantErr {
 				assert.Error(err)
 				assert.Nil(track)

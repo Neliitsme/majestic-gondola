@@ -1,4 +1,4 @@
-package handlers
+package dto
 
 type CreateTrackRequest struct {
 	Name        string   `json:"name" binding:"required" example:"Bohemian Rhapsody"`
