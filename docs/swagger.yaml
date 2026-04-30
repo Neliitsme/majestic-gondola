@@ -1,4 +1,43 @@
 definitions:
+  ArtistResponse:
+    properties:
+      created_at:
+        example: "2006-01-02 15:04:05"
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Queen
+        type: string
+      score:
+        example: 100
+        type: integer
+    type: object
+  CreateArtistRequest:
+    properties:
+      name:
+        example: Queen
+        type: string
+    required:
+    - name
+    type: object
+  CreateReviewRequest:
+    properties:
+      score:
+        example: 1
+        maximum: 100
+        minimum: 0
+        type: integer
+      track_id:
+        example: 1
+        type: integer
+      user_id:
+        example: 1
+        type: integer
+    required:
+    - score
+    type: object
   CreateTrackRequest:
     properties:
       artist_id:
@@ -20,6 +59,14 @@ definitions:
     required:
     - name
     type: object
+  CreateUserRequest:
+    properties:
+      name:
+        example: Tempo
+        type: string
+    required:
+    - name
+    type: object
   ErrResponse:
     properties:
       message:
@@ -29,6 +76,30 @@ definitions:
   PopulateRequest:
     properties:
       artist_id:
+        example: 1
+        type: integer
+    type: object
+  ReviewResponse:
+    properties:
+      created_at:
+        example: "2006-01-02 15:04:05"
+        type: string
+      id:
+        example: 1
+        type: integer
+      is_deleted:
+        example: false
+        type: boolean
+      is_processed:
+        example: false
+        type: boolean
+      score:
+        example: 1
+        type: integer
+      track_id:
+        example: 1
+        type: integer
+      user_id:
         example: 1
         type: integer
     type: object
@@ -60,6 +131,30 @@ definitions:
         example: 100
         type: integer
     type: object
+  UpdateArtistRequest:
+    properties:
+      name:
+        example: Queen
+        type: string
+    required:
+    - name
+    type: object
+  UpdateReviewRequest:
+    properties:
+      score:
+        example: 1
+        maximum: 100
+        minimum: 0
+        type: integer
+      track_id:
+        example: 1
+        type: integer
+      user_id:
+        example: 1
+        type: integer
+    required:
+    - score
+    type: object
   UpdateTrackRequest:
     properties:
       artist_id:
@@ -81,6 +176,26 @@ definitions:
     required:
     - name
     type: object
+  UpdateUserRequest:
+    properties:
+      name:
+        example: Tempo
+        type: string
+    required:
+    - name
+    type: object
+  UserResponse:
+    properties:
+      created_at:
+        example: "2006-01-02 15:04:05"
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Tempo
+        type: string
+    type: object
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
@@ -90,7 +205,237 @@ info:
   title: Majestic gondola API
   version: "1.0"
 paths:
-  /track:
+  /artists:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all artists in the database
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/ArtistResponse'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrResponse'
+      summary: List artists
+      tags:
+      - artists
+    post:
+      consumes:
+      - application/json
+      description: Create multiple artists at once from a JSON array
+      parameters:
+      - description: List of artists to create
+        in: body
+        name: artists
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/CreateArtistRequest'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/ErrResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrResponse'
+      summary: Bulk create artists
+      tags:
+      - artists
+  /artists/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a single artist by their unique ID
+      parameters:
+      - description: Artist ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ArtistResponse'
+        "400":
+          description: Invalid ID format
+          schema:
+            $ref: '#/definitions/ErrResponse'
+        "404":
+          description: Artist not found
+          schema:
+            $ref: '#/definitions/ErrResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrResponse'
+      summary: Get a artist
+      tags:
+      - artists
+    put:
+      consumes:
+      - application/json
+      description: Update the details of an existing artist
+      parameters:
+      - description: Artist ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Artist update data
+        in: body
+        name: artist
+        required: true
+        schema:
+          $ref: '#/definitions/UpdateArtistRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/ErrResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrResponse'
+      summary: Update an artist
+      tags:
+      - artists
+  /reviews:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all reviews in the database
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/ReviewResponse'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrResponse'
+      summary: List reviews
+      tags:
+      - reviews
+    post:
+      consumes:
+      - application/json
+      description: Create multiple reviews at once from a JSON array
+      parameters:
+      - description: List of reviews to create
+        in: body
+        name: reviews
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/CreateReviewRequest'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/ErrResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrResponse'
+      summary: Bulk create reviews
+      tags:
+      - reviews
+  /reviews/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a single review by its unique ID
+      parameters:
+      - description: Review ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ReviewResponse'
+        "400":
+          description: Invalid ID format
+          schema:
+            $ref: '#/definitions/ErrResponse'
+        "404":
+          description: Review not found
+          schema:
+            $ref: '#/definitions/ErrResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrResponse'
+      summary: Get a review
+      tags:
+      - reviews
+    put:
+      consumes:
+      - application/json
+      description: Update the details of an existing review
+      parameters:
+      - description: Review ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Review update data
+        in: body
+        name: review
+        required: true
+        schema:
+          $ref: '#/definitions/UpdateReviewRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/ErrResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrResponse'
+      summary: Update a review
+      tags:
+      - reviews
+  /tracks:
     get:
       consumes:
       - application/json
@@ -140,7 +485,7 @@ paths:
       summary: Bulk create tracks
       tags:
       - tracks
-  /track/{id}:
+  /tracks/{id}:
     get:
       consumes:
       - application/json
@@ -205,7 +550,30 @@ paths:
       summary: Update a track
       tags:
       - tracks
-  /track/populate/{count}:
+  /tracks/{id}/reviews:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all track reviews in the database
+      parameters:
+      - description: Track ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrResponse'
+      summary: List track reviews
+      tags:
+      - reviews
+  /tracks/populate/{count}:
     post:
       consumes:
       - application/json
@@ -237,4 +605,142 @@ paths:
       summary: Seed dummy data
       tags:
       - dev
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all users in the database
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/UserResponse'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrResponse'
+      summary: List users
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Create multiple users at once from a JSON array
+      parameters:
+      - description: List of users to create
+        in: body
+        name: users
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/CreateUserRequest'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/ErrResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrResponse'
+      summary: Bulk create users
+      tags:
+      - users
+  /users/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a single user by their unique ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/UserResponse'
+        "400":
+          description: Invalid ID format
+          schema:
+            $ref: '#/definitions/ErrResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/ErrResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrResponse'
+      summary: Get a user
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Update the details of an existing user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User update data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/ErrResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrResponse'
+      summary: Update a user
+      tags:
+      - users
+  /users/{id}/reviews:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all reviews of the user in the database
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrResponse'
+      summary: List user reviews
+      tags:
+      - reviews
 swagger: "2.0"

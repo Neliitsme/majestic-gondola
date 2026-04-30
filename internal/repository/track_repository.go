@@ -27,7 +27,7 @@ func NewTrackRepository(db *pg.DB, logger *slog.Logger) TrackRepository {
 
 func (r *trackRepository) FindById(id int) (*models.Track, error) {
 	track := new(models.Track)
-	err := r.db.Model(track).Where("id = ?", id).Select()
+	err := r.db.Model(track).Where("track_id = ?", id).Select()
 
 	if err != nil {
 		if errors.Is(err, pg.ErrNoRows) {

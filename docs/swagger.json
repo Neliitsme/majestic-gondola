@@ -7,7 +7,355 @@
         "version": "1.0"
     },
     "paths": {
-        "/track": {
+        "/artists": {
+            "get": {
+                "description": "Get a list of all artists in the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "artists"
+                ],
+                "summary": "List artists",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ArtistResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create multiple artists at once from a JSON array",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "artists"
+                ],
+                "summary": "Bulk create artists",
+                "parameters": [
+                    {
+                        "description": "List of artists to create",
+                        "name": "artists",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/CreateArtistRequest"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/artists/{id}": {
+            "get": {
+                "description": "Retrieve a single artist by their unique ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "artists"
+                ],
+                "summary": "Get a artist",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Artist ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ArtistResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID format",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Artist not found",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update the details of an existing artist",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "artists"
+                ],
+                "summary": "Update an artist",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Artist ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Artist update data",
+                        "name": "artist",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdateArtistRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated"
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/reviews": {
+            "get": {
+                "description": "Get a list of all reviews in the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "List reviews",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ReviewResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create multiple reviews at once from a JSON array",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Bulk create reviews",
+                "parameters": [
+                    {
+                        "description": "List of reviews to create",
+                        "name": "reviews",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/CreateReviewRequest"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/reviews/{id}": {
+            "get": {
+                "description": "Retrieve a single review by its unique ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Get a review",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Review ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ReviewResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID format",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Review not found",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update the details of an existing review",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "Update a review",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Review ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Review update data",
+                        "name": "review",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdateReviewRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated"
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tracks": {
             "get": {
                 "description": "Get a list of all tracks in the database",
                 "consumes": [
@@ -83,7 +431,7 @@
                 }
             }
         },
-        "/track/populate/{count}": {
+        "/tracks/populate/{count}": {
             "post": {
                 "description": "Generate random tracks for development testing",
                 "consumes": [
@@ -132,7 +480,7 @@
                 }
             }
         },
-        "/track/{id}": {
+        "/tracks/{id}": {
             "get": {
                 "description": "Retrieve a single track by its unique ID",
                 "consumes": [
@@ -229,9 +577,308 @@
                     }
                 }
             }
+        },
+        "/tracks/{id}/reviews": {
+            "get": {
+                "description": "Get a list of all track reviews in the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "List track reviews",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Track ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "description": "Get a list of all users in the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "List users",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/UserResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create multiple users at once from a JSON array",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Bulk create users",
+                "parameters": [
+                    {
+                        "description": "List of users to create",
+                        "name": "users",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/CreateUserRequest"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "description": "Retrieve a single user by their unique ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get a user",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/UserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID format",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update the details of an existing user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Update a user",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "User update data",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdateUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated"
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/reviews": {
+            "get": {
+                "description": "Get a list of all reviews of the user in the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reviews"
+                ],
+                "summary": "List user reviews",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "ArtistResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Queen"
+                },
+                "score": {
+                    "type": "integer",
+                    "example": 100
+                }
+            }
+        },
+        "CreateArtistRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "Queen"
+                }
+            }
+        },
+        "CreateReviewRequest": {
+            "type": "object",
+            "required": [
+                "score"
+            ],
+            "properties": {
+                "score": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 0,
+                    "example": 1
+                },
+                "track_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "user_id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
         "CreateTrackRequest": {
             "type": "object",
             "required": [
@@ -262,6 +909,18 @@
                 }
             }
         },
+        "CreateUserRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "Tempo"
+                }
+            }
+        },
         "ErrResponse": {
             "type": "object",
             "properties": {
@@ -275,6 +934,39 @@
             "type": "object",
             "properties": {
                 "artist_id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "ReviewResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "is_deleted": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "is_processed": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "score": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "track_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "user_id": {
                     "type": "integer",
                     "example": 1
                 }
@@ -319,6 +1011,40 @@
                 }
             }
         },
+        "UpdateArtistRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "Queen"
+                }
+            }
+        },
+        "UpdateReviewRequest": {
+            "type": "object",
+            "required": [
+                "score"
+            ],
+            "properties": {
+                "score": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 0,
+                    "example": 1
+                },
+                "track_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "user_id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
         "UpdateTrackRequest": {
             "type": "object",
             "required": [
@@ -346,6 +1072,35 @@
                 "release_date": {
                     "type": "string",
                     "example": "1975-10-31 15:04:05"
+                }
+            }
+        },
+        "UpdateUserRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "Tempo"
+                }
+            }
+        },
+        "UserResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2006-01-02 15:04:05"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Tempo"
                 }
             }
         }

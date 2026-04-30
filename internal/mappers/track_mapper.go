@@ -57,3 +57,11 @@ func ToTrackResponse(t *models.Track) dto.TrackResponse {
 		CreatedAt:   t.CreatedAt.Format(time.DateTime),
 	}
 }
+
+func ToTrackResponseList(ts []models.Track) []dto.TrackResponse {
+	responses := make([]dto.TrackResponse, 0, len(ts))
+	for i := range ts {
+		responses = append(responses, ToTrackResponse(&ts[i]))
+	}
+	return responses
+}

@@ -68,14 +68,52 @@ func main() {
 	tsvc := service.NewTrackService(tr, logger)
 	th := handlers.NewTrackHandler(tsvc, logger)
 
+	ar := repository.NewArtistRepository(db, logger)
+	asvc := service.NewArtistService(ar, logger)
+	ah := handlers.NewArtistHandler(asvc, logger)
+
+	ur := repository.NewUserRepository(db, logger)
+	usvc := service.NewUserService(ur, logger)
+	uh := handlers.NewUserHandler(usvc, logger)
+
+	rr := repository.NewReviewRepository(db, logger)
+	rsvc := service.NewReviewService(rr, logger)
+	rh := handlers.NewReviewHandler(rsvc, logger)
+
 	// Set up endpoints
-	trackGroup := r.Group("/track")
+	trackGrp := r.Group("/tracks")
 	{
-		trackGroup.GET("/", th.GetTracks)
-		trackGroup.GET("/:id", th.GetTrack)
-		trackGroup.POST("/", th.CreateTracks)
-		trackGroup.PUT("/:id", th.UpdateTrack)
-		trackGroup.POST("/populate/:count", th.PopulateTracks)
+		trackGrp.GET("/", th.GetTracks)
+		trackGrp.GET("/:id", th.GetTrack)
+		trackGrp.POST("/", th.CreateTracks)
+		trackGrp.PUT("/:id", th.UpdateTrack)
+		trackGrp.POST("/populate/:count", th.PopulateTracks)
+		trackGrp.GET("/:id/reviews", rh.GetTrackReviews)
+	}
+
+	artistGrp := r.Group("/artists")
+	{
+		artistGrp.GET("/", ah.GetArtists)
+		artistGrp.GET("/:id", ah.GetArtist)
+		artistGrp.POST("/", ah.CreateArtists)
+		artistGrp.PUT("/:id", ah.UpdateArtist)
+	}
+
+	userGrp := r.Group("/users")
+	{
+		userGrp.GET("/", uh.GetUsers)
+		userGrp.GET("/:id", uh.GetUser)
+		userGrp.POST("/", uh.CreateUsers)
+		userGrp.PUT("/:id", uh.UpdateUser)
+		userGrp.GET("/:id/reviews", rh.GetUserReviews)
+	}
+
+	reviewGrp := r.Group("/reviews")
+	{
+		reviewGrp.GET("/", rh.GetReviews)
+		reviewGrp.GET("/:id", rh.GetReview)
+		reviewGrp.POST("/", rh.CreateReviews)
+		reviewGrp.PUT("/:id", rh.UpdateReview)
 	}
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

@@ -31,7 +31,7 @@ func NewTrackHandler(trackService service.TrackService, logger *slog.Logger) *Tr
 //	@Produce		json
 //	@Success		200	{array}		dto.TrackResponse
 //	@Failure		500	{object}	dto.ErrResponse	"Internal server error"
-//	@Router			/track [get]
+//	@Router			/tracks [get]
 func (h *TrackHandler) GetTracks(c *gin.Context) {
 	tracks, err := h.trackService.GetAll()
 	if err != nil {
@@ -40,12 +40,7 @@ func (h *TrackHandler) GetTracks(c *gin.Context) {
 		return
 	}
 
-	resTracks := make([]dto.TrackResponse, 0, len(tracks))
-	for i := range tracks {
-		resTracks = append(resTracks, mappers.ToTrackResponse(&tracks[i]))
-	}
-
-	c.JSON(http.StatusOK, resTracks)
+	c.JSON(http.StatusOK, mappers.ToTrackResponseList(tracks))
 }
 
 // GetTrack godoc
@@ -60,7 +55,7 @@ func (h *TrackHandler) GetTracks(c *gin.Context) {
 //	@Failure		400	{object}	dto.ErrResponse	"Invalid ID format"
 //	@Failure		404	{object}	dto.ErrResponse	"Track not found"
 //	@Failure		500	{object}	dto.ErrResponse	"Internal server error"
-//	@Router			/track/{id} [get]
+//	@Router			/tracks/{id} [get]
 func (h *TrackHandler) GetTrack(c *gin.Context) {
 	var req dto.IdUriRequest
 
@@ -94,7 +89,7 @@ func (h *TrackHandler) GetTrack(c *gin.Context) {
 //	@Success		201		"Created"
 //	@Failure		400		{object}	dto.ErrResponse	"Invalid request body"
 //	@Failure		500		{object}	dto.ErrResponse	"Internal server error"
-//	@Router			/track [post]
+//	@Router			/tracks [post]
 func (h *TrackHandler) CreateTracks(c *gin.Context) {
 	var req []dto.CreateTrackRequest
 
@@ -136,7 +131,7 @@ func (h *TrackHandler) CreateTracks(c *gin.Context) {
 //	@Success		201		"Created"
 //	@Failure		400		{object}	dto.ErrResponse	"Invalid count"
 //	@Failure		500		{object}	dto.ErrResponse	"Internal server error"
-//	@Router			/track/populate/{count} [post]
+//	@Router			/tracks/populate/{count} [post]
 func (h *TrackHandler) PopulateTracks(c *gin.Context) {
 	uri := struct {
 		Count int `uri:"count" binding:"required"`
@@ -175,7 +170,7 @@ func (h *TrackHandler) PopulateTracks(c *gin.Context) {
 //	@Success		200		"Updated"
 //	@Failure		400		{object}	dto.ErrResponse	"Invalid request body"
 //	@Failure		500		{object}	dto.ErrResponse	"Internal server error"
-//	@Router			/track/{id} [put]
+//	@Router			/tracks/{id} [put]
 func (h *TrackHandler) UpdateTrack(c *gin.Context) {
 	var uri dto.IdUriRequest
 	var body dto.UpdateTrackRequest

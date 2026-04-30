@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS "artists" (
 CREATE TABLE IF NOT EXISTS "users" (
 	"user_id" integer NOT NULL GENERATED ALWAYS AS IDENTITY,
 	"name" text NOT NULL,
+	"created_at" timestamptz NOT NULL DEFAULT now(),
 	CONSTRAINT "pk_users" PRIMARY KEY("user_id")
 );
 
