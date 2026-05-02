@@ -19,6 +19,18 @@ func NewReviewHandler(reviewService service.ReviewService, logger *slog.Logger) 
 	return &ReviewHandler{log: logger.With("component", "review_handler"), reviewService: reviewService}
 }
 
+func (h *ReviewHandler) RegisterRoutes(rg *gin.RouterGroup) {
+	rg.GET("/", h.GetReviews)
+	rg.GET("/:id", h.GetReview)
+	rg.POST("/", h.CreateReviews)
+	rg.PUT("/:id", h.UpdateReview)
+}
+
+func (h *ReviewHandler) RegisterNestedRoutes(tracks, users *gin.RouterGroup) {
+	tracks.GET("/:id/reviews", h.GetTrackReviews)
+	users.GET("/:id/reviews", h.GetUserReviews)
+}
+
 // GetReviews godoc
 //
 //	@Summary		List reviews

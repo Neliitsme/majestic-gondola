@@ -19,6 +19,13 @@ func NewArtistHandler(artistService service.ArtistService, logger *slog.Logger) 
 	return &ArtistHandler{log: logger.With("component", "artist_handler"), artistService: artistService}
 }
 
+func (h *ArtistHandler) RegisterRoutes(rg *gin.RouterGroup) {
+	rg.GET("/", h.GetArtists)
+	rg.GET("/:id", h.GetArtist)
+	rg.POST("/", h.CreateArtists)
+	rg.PUT("/:id", h.UpdateArtist)
+}
+
 // GetArtists godoc
 //
 //	@Summary		List artists

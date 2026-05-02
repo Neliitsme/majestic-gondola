@@ -20,6 +20,14 @@ func NewTrackHandler(trackService service.TrackService, logger *slog.Logger) *Tr
 	return &TrackHandler{log: logger.With("component", "track_handler"), trackService: trackService}
 }
 
+func (h *TrackHandler) RegisterRoutes(rg *gin.RouterGroup) {
+	rg.GET("/", h.GetTracks)
+	rg.GET("/:id", h.GetTrack)
+	rg.POST("/", h.CreateTracks)
+	rg.PUT("/:id", h.UpdateTrack)
+	rg.POST("/populate/:count", h.PopulateTracks)
+}
+
 // GetTracks godoc
 //
 //	@Summary		List tracks

@@ -19,6 +19,13 @@ func NewUserHandler(userService service.UserService, logger *slog.Logger) *UserH
 	return &UserHandler{log: logger.With("component", "user_handler"), userService: userService}
 }
 
+func (h *UserHandler) RegisterRoutes(rg *gin.RouterGroup) {
+	rg.GET("/", h.GetUsers)
+	rg.GET("/:id", h.GetUser)
+	rg.POST("/", h.CreateUsers)
+	rg.PUT("/:id", h.UpdateUser)
+}
+
 // GetUsers godoc
 //
 //	@Summary		List users

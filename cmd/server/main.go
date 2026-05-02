@@ -81,40 +81,14 @@ func main() {
 	rh := handlers.NewReviewHandler(rsvc, logger)
 
 	// Set up endpoints
-	trackGrp := r.Group("/tracks")
-	{
-		trackGrp.GET("/", th.GetTracks)
-		trackGrp.GET("/:id", th.GetTrack)
-		trackGrp.POST("/", th.CreateTracks)
-		trackGrp.PUT("/:id", th.UpdateTrack)
-		trackGrp.POST("/populate/:count", th.PopulateTracks)
-		trackGrp.GET("/:id/reviews", rh.GetTrackReviews)
-	}
+	tracksGrp := r.Group("/tracks")
+	usersGrp := r.Group("/users")
 
-	artistGrp := r.Group("/artists")
-	{
-		artistGrp.GET("/", ah.GetArtists)
-		artistGrp.GET("/:id", ah.GetArtist)
-		artistGrp.POST("/", ah.CreateArtists)
-		artistGrp.PUT("/:id", ah.UpdateArtist)
-	}
-
-	userGrp := r.Group("/users")
-	{
-		userGrp.GET("/", uh.GetUsers)
-		userGrp.GET("/:id", uh.GetUser)
-		userGrp.POST("/", uh.CreateUsers)
-		userGrp.PUT("/:id", uh.UpdateUser)
-		userGrp.GET("/:id/reviews", rh.GetUserReviews)
-	}
-
-	reviewGrp := r.Group("/reviews")
-	{
-		reviewGrp.GET("/", rh.GetReviews)
-		reviewGrp.GET("/:id", rh.GetReview)
-		reviewGrp.POST("/", rh.CreateReviews)
-		reviewGrp.PUT("/:id", rh.UpdateReview)
-	}
+	th.RegisterRoutes(tracksGrp)
+	ah.RegisterRoutes(r.Group("/artists"))
+	uh.RegisterRoutes(usersGrp)
+	rh.RegisterRoutes(r.Group("/reviews"))
+	rh.RegisterNestedRoutes(tracksGrp, usersGrp)
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.GET("/swagger", func(c *gin.Context) {
