@@ -45,7 +45,7 @@ func (u *userService) Get(id int) (*models.User, error) {
 		if errors.Is(err, apperr.ErrNotFound) {
 			return nil, apperr.NotFound("User not found", err)
 		}
-		u.log.Error("Failed to fetch u user by id", slog.Any("error", err), slog.Int("id", id))
+		u.log.Error("Failed to fetch a user by id", slog.Any("error", err), slog.Int("id", id))
 		return nil, apperr.Internal(err)
 	}
 

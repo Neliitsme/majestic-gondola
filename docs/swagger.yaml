@@ -105,7 +105,7 @@ definitions:
     type: object
   TrackResponse:
     properties:
-      author:
+      artist_id:
         example: 1
         type: integer
       created_at:

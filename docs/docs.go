@@ -983,7 +983,7 @@ const docTemplate = `{
         "TrackResponse": {
             "type": "object",
             "properties": {
-                "author": {
+                "artist_id": {
                     "type": "integer",
                     "example": 1
                 },

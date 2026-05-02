@@ -17,7 +17,7 @@ type UpdateTrackRequest struct {
 type TrackResponse struct {
 	Id          int      `json:"id" example:"1"`
 	Name        string   `json:"name" example:"Bohemian Rhapsody"`
-	ArtistId    *int     `json:"author" example:"1"`
+	ArtistId    *int     `json:"artist_id" example:"1"`
 	ReleaseDate string   `json:"release_date" example:"1975-10-31 15:04:05"`
 	Genres      []string `json:"genres" example:"Rock,Opera"`
 	CreatedAt   string   `json:"created_at" example:"2006-01-02 15:04:05"`
