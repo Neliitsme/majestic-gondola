@@ -1,9 +1,7 @@
 package handlers
 
 import (
-	"errors"
 	"log/slog"
-	"majestic-gondola/internal/apperr"
 	"majestic-gondola/internal/dto"
 	"majestic-gondola/internal/mappers"
 	"majestic-gondola/internal/models"
@@ -35,8 +33,7 @@ func NewTrackHandler(trackService service.TrackService, logger *slog.Logger) *Tr
 func (h *TrackHandler) GetTracks(c *gin.Context) {
 	tracks, err := h.trackService.GetAll()
 	if err != nil {
-		h.log.Error("Failed to fetch the track list", slog.Any("error", err))
-		c.JSON(http.StatusInternalServerError, dto.InternalErrResponse)
+		respondErr(c, err)
 		return
 	}
 
@@ -67,11 +64,7 @@ func (h *TrackHandler) GetTrack(c *gin.Context) {
 	track, err := h.trackService.Get(req.Id)
 
 	if err != nil {
-		if appErr, ok := errors.AsType[*apperr.AppError](err); ok {
-			c.JSON(appErr.Code, dto.ErrResponse{Message: appErr.Message})
-			return
-		}
-		c.JSON(http.StatusInternalServerError, dto.InternalErrResponse)
+		respondErr(c, err)
 		return
 	}
 
@@ -112,7 +105,7 @@ func (h *TrackHandler) CreateTracks(c *gin.Context) {
 	err := h.trackService.BulkCreate(tracks)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, dto.InternalErrResponse)
+		respondErr(c, err)
 		return
 	}
 
@@ -151,7 +144,7 @@ func (h *TrackHandler) PopulateTracks(c *gin.Context) {
 	err := h.trackService.Generate(uri.Count, body.ArtistId)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, dto.InternalErrResponse)
+		respondErr(c, err)
 		return
 	}
 
@@ -194,11 +187,7 @@ func (h *TrackHandler) UpdateTrack(c *gin.Context) {
 
 	err = h.trackService.Update(track)
 	if err != nil {
-		if appErr, ok := errors.AsType[*apperr.AppError](err); ok {
-			c.JSON(appErr.Code, dto.ErrResponse{Message: appErr.Message})
-			return
-		}
-		c.JSON(http.StatusInternalServerError, dto.InternalErrResponse)
+		respondErr(c, err)
 		return
 	}
 

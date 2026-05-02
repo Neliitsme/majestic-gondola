@@ -1,9 +1,7 @@
 package handlers
 
 import (
-	"errors"
 	"log/slog"
-	"majestic-gondola/internal/apperr"
 	"majestic-gondola/internal/dto"
 	"majestic-gondola/internal/mappers"
 	"majestic-gondola/internal/service"
@@ -34,8 +32,7 @@ func NewUserHandler(userService service.UserService, logger *slog.Logger) *UserH
 func (h *UserHandler) GetUsers(c *gin.Context) {
 	users, err := h.userService.GetAll()
 	if err != nil {
-		h.log.Error("Failed to fetch the user list", slog.Any("error", err))
-		c.JSON(http.StatusInternalServerError, dto.InternalErrResponse)
+		respondErr(c, err)
 		return
 	}
 
@@ -66,11 +63,7 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 	user, err := h.userService.Get(req.Id)
 
 	if err != nil {
-		if appErr, ok := errors.AsType[*apperr.AppError](err); ok {
-			c.JSON(appErr.Code, dto.ErrResponse{Message: appErr.Message})
-			return
-		}
-		c.JSON(http.StatusInternalServerError, dto.InternalErrResponse)
+		respondErr(c, err)
 		return
 	}
 
@@ -101,7 +94,7 @@ func (h *UserHandler) CreateUsers(c *gin.Context) {
 	err := h.userService.BulkCreate(users)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, dto.InternalErrResponse)
+		respondErr(c, err)
 		return
 	}
 
@@ -139,11 +132,7 @@ func (h *UserHandler) UpdateUser(c *gin.Context) {
 
 	err := h.userService.Update(user)
 	if err != nil {
-		if appErr, ok := errors.AsType[*apperr.AppError](err); ok {
-			c.JSON(appErr.Code, dto.ErrResponse{Message: appErr.Message})
-			return
-		}
-		c.JSON(http.StatusInternalServerError, dto.InternalErrResponse)
+		respondErr(c, err)
 		return
 	}
 

@@ -1,9 +1,7 @@
 package handlers
 
 import (
-	"errors"
 	"log/slog"
-	"majestic-gondola/internal/apperr"
 	"majestic-gondola/internal/dto"
 	"majestic-gondola/internal/mappers"
 	"majestic-gondola/internal/service"
@@ -34,8 +32,7 @@ func NewReviewHandler(reviewService service.ReviewService, logger *slog.Logger) 
 func (h *ReviewHandler) GetReviews(c *gin.Context) {
 	reviews, err := h.reviewService.GetAll()
 	if err != nil {
-		h.log.Error("Failed to fetch the review list", slog.Any("error", err))
-		c.JSON(http.StatusInternalServerError, dto.InternalErrResponse)
+		respondErr(c, err)
 		return
 	}
 
@@ -66,11 +63,7 @@ func (h *ReviewHandler) GetReview(c *gin.Context) {
 	review, err := h.reviewService.Get(req.Id)
 
 	if err != nil {
-		if appErr, ok := errors.AsType[*apperr.AppError](err); ok {
-			c.JSON(appErr.Code, dto.ErrResponse{Message: appErr.Message})
-			return
-		}
-		c.JSON(http.StatusInternalServerError, dto.InternalErrResponse)
+		respondErr(c, err)
 		return
 	}
 
@@ -101,7 +94,7 @@ func (h *ReviewHandler) CreateReviews(c *gin.Context) {
 	err := h.reviewService.BulkCreate(reviews)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, dto.InternalErrResponse)
+		respondErr(c, err)
 		return
 	}
 
@@ -139,11 +132,7 @@ func (h *ReviewHandler) UpdateReview(c *gin.Context) {
 
 	err := h.reviewService.Update(review)
 	if err != nil {
-		if appErr, ok := errors.AsType[*apperr.AppError](err); ok {
-			c.JSON(appErr.Code, dto.ErrResponse{Message: appErr.Message})
-			return
-		}
-		c.JSON(http.StatusInternalServerError, dto.InternalErrResponse)
+		respondErr(c, err)
 		return
 	}
 
@@ -172,11 +161,7 @@ func (h *ReviewHandler) GetTrackReviews(c *gin.Context) {
 	reviews, err := h.reviewService.GetTrackReviews(req.Id)
 
 	if err != nil {
-		if appErr, ok := errors.AsType[*apperr.AppError](err); ok {
-			c.JSON(appErr.Code, dto.ErrResponse{Message: appErr.Message})
-			return
-		}
-		c.JSON(http.StatusInternalServerError, dto.InternalErrResponse)
+		respondErr(c, err)
 		return
 	}
 
@@ -205,11 +190,7 @@ func (h *ReviewHandler) GetUserReviews(c *gin.Context) {
 	reviews, err := h.reviewService.GetUserReviews(req.Id)
 
 	if err != nil {
-		if appErr, ok := errors.AsType[*apperr.AppError](err); ok {
-			c.JSON(appErr.Code, dto.ErrResponse{Message: appErr.Message})
-			return
-		}
-		c.JSON(http.StatusInternalServerError, dto.InternalErrResponse)
+		respondErr(c, err)
 		return
 	}
 

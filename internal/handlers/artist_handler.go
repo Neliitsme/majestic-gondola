@@ -1,9 +1,7 @@
 package handlers
 
 import (
-	"errors"
 	"log/slog"
-	"majestic-gondola/internal/apperr"
 	"majestic-gondola/internal/dto"
 	"majestic-gondola/internal/mappers"
 	"majestic-gondola/internal/service"
@@ -34,8 +32,7 @@ func NewArtistHandler(artistService service.ArtistService, logger *slog.Logger) 
 func (h *ArtistHandler) GetArtists(c *gin.Context) {
 	artists, err := h.artistService.GetAll()
 	if err != nil {
-		h.log.Error("Failed to fetch the artist list", slog.Any("error", err))
-		c.JSON(http.StatusInternalServerError, dto.InternalErrResponse)
+		respondErr(c, err)
 		return
 	}
 
@@ -66,11 +63,7 @@ func (h *ArtistHandler) GetArtist(c *gin.Context) {
 	artist, err := h.artistService.Get(req.Id)
 
 	if err != nil {
-		if appErr, ok := errors.AsType[*apperr.AppError](err); ok {
-			c.JSON(appErr.Code, dto.ErrResponse{Message: appErr.Message})
-			return
-		}
-		c.JSON(http.StatusInternalServerError, dto.InternalErrResponse)
+		respondErr(c, err)
 		return
 	}
 
@@ -101,7 +94,7 @@ func (h *ArtistHandler) CreateArtists(c *gin.Context) {
 	err := h.artistService.BulkCreate(artists)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, dto.InternalErrResponse)
+		respondErr(c, err)
 		return
 	}
 
@@ -139,11 +132,7 @@ func (h *ArtistHandler) UpdateArtist(c *gin.Context) {
 
 	err := h.artistService.Update(artist)
 	if err != nil {
-		if appErr, ok := errors.AsType[*apperr.AppError](err); ok {
-			c.JSON(appErr.Code, dto.ErrResponse{Message: appErr.Message})
-			return
-		}
-		c.JSON(http.StatusInternalServerError, dto.InternalErrResponse)
+		respondErr(c, err)
 		return
 	}
 
