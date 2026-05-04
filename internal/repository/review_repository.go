@@ -88,7 +88,10 @@ func (r *reviewRepository) Update(review *models.Review) error {
 // GetUnprocessed implements [ReviewRepository].
 func (r *reviewRepository) GetUnprocessed() ([]models.Review, error) {
 	var reviews []models.Review
-	err := r.db.Model(&reviews).Where("is_processed = false").Select()
+	err := r.db.Model(&reviews).
+		Relation("Track").
+		Where("review.is_processed = false").
+		Select()
 
 	if err != nil {
 		if errors.Is(err, pg.ErrNoRows) {

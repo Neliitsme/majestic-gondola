@@ -12,7 +12,7 @@ Current plan is to make some cron service that would start some goroutines to pr
 
 ## Plans
 - [x] A simple CRUD with a few entities related to each other
-- [ ] Write some business logic
+- [x] Write some business logic
 - [ ] Write some frontend
 - [ ] Add in-memory cache
 - [ ] Try zenrpc
