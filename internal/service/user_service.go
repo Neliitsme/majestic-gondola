@@ -76,6 +76,6 @@ func (u *userService) Update(user *models.User) error {
 		return apperr.Internal(err)
 	}
 
-	u.log.Info("Updated u user")
+	u.log.Info("Updated a user")
 	return nil
 }

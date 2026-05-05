@@ -27,9 +27,8 @@ func newProc(t *testing.T) (
 	*mocks.MockScoreCommitter,
 ) {
 	rr := mocks.NewMockReviewRepository(t)
-	tr := mocks.NewMockTrackRepository(t)
 	committer := mocks.NewMockScoreCommitter(t)
-	proc := processor.NewReviewProcessor(rr, tr, committer, discardLogger())
+	proc := processor.NewReviewProcessor(rr, committer, discardLogger())
 	return proc, rr, committer
 }
 

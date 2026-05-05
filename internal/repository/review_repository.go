@@ -94,9 +94,6 @@ func (r *reviewRepository) GetUnprocessed() ([]models.Review, error) {
 		Select()
 
 	if err != nil {
-		if errors.Is(err, pg.ErrNoRows) {
-			return nil, apperr.ErrNotFound
-		}
 		return nil, err
 	}
 
@@ -106,7 +103,7 @@ func (r *reviewRepository) GetUnprocessed() ([]models.Review, error) {
 // TODO: Use soft deletes
 // BulkDelete implements [ReviewRepository].
 func (r *reviewRepository) BulkDelete(ids []int) error {
-	_, err := r.db.Model((*models.Review)(nil)).Where("review_id IN (?)", pg.In(ids)).Delete()
+	_, err := r.db.Model(new(models.Review)).Where("review_id IN (?)", pg.In(ids)).Delete()
 
 	if err != nil {
 		return err
@@ -122,9 +119,6 @@ func (r *reviewRepository) GetTrackReviews(trackId int) ([]models.Review, error)
 	err := r.db.Model(&reviews).Where("track_id = ?", trackId).Select()
 
 	if err != nil {
-		if errors.Is(err, pg.ErrNoRows) {
-			return nil, apperr.ErrNotFound
-		}
 		return nil, err
 	}
 
@@ -137,9 +131,6 @@ func (r *reviewRepository) GetUserReviews(userId int) ([]models.Review, error) {
 	err := r.db.Model(&reviews).Where("user_id = ?", userId).Select()
 
 	if err != nil {
-		if errors.Is(err, pg.ErrNoRows) {
-			return nil, apperr.ErrNotFound
-		}
 		return nil, err
 	}
 

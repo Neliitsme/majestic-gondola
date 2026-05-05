@@ -21,7 +21,7 @@ func setupProcessors(
 	sc repository.ScoreCommitter,
 	logger *slog.Logger,
 ) {
-	reviewProc := processor.NewReviewProcessor(rr, tr, sc, logger)
+	reviewProc := processor.NewReviewProcessor(rr, sc, logger)
 	addJob(c, cfg.ReviewProcessorSchedule, "review", logger, func() {
 		if err := reviewProc.Run(ctx); err != nil {
 			logger.Error("Review processor failed", slog.Any("error", err))

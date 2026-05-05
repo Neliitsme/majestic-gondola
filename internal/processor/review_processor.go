@@ -9,7 +9,6 @@ import (
 
 type ReviewProcessor struct {
 	reviewRepo repository.ReviewRepository
-	trackRepo  repository.TrackRepository
 	committer  repository.ScoreCommitter
 	log        *slog.Logger
 	isRunning  atomic.Bool
@@ -17,13 +16,11 @@ type ReviewProcessor struct {
 
 func NewReviewProcessor(
 	reviewRepo repository.ReviewRepository,
-	trackRepo repository.TrackRepository,
 	committer repository.ScoreCommitter,
 	log *slog.Logger,
 ) *ReviewProcessor {
 	return &ReviewProcessor{
 		reviewRepo: reviewRepo,
-		trackRepo:  trackRepo,
 		committer:  committer,
 		log:        log.With("component", "review_processor"),
 	}
