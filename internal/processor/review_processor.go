@@ -10,7 +10,6 @@ import (
 type ReviewProcessor struct {
 	reviewRepo repository.ReviewRepository
 	trackRepo  repository.TrackRepository
-	artistRepo repository.ArtistRepository
 	committer  repository.ScoreCommitter
 	log        *slog.Logger
 	isRunning  atomic.Bool
@@ -19,14 +18,12 @@ type ReviewProcessor struct {
 func NewReviewProcessor(
 	reviewRepo repository.ReviewRepository,
 	trackRepo repository.TrackRepository,
-	artistRepo repository.ArtistRepository,
 	committer repository.ScoreCommitter,
 	log *slog.Logger,
 ) *ReviewProcessor {
 	return &ReviewProcessor{
 		reviewRepo: reviewRepo,
 		trackRepo:  trackRepo,
-		artistRepo: artistRepo,
 		committer:  committer,
 		log:        log.With("component", "review_processor"),
 	}
@@ -41,7 +38,7 @@ type trackData struct {
 
 func (p *ReviewProcessor) Run(ctx context.Context) error {
 	if !p.isRunning.CompareAndSwap(false, true) {
-		p.log.Warn("processor already running, skipping")
+		p.log.Warn("Processor already running, skipping")
 		return nil
 	}
 	defer p.isRunning.Store(false)
@@ -85,6 +82,6 @@ func (p *ReviewProcessor) Run(ctx context.Context) error {
 		return err
 	}
 
-	p.log.Info("processed reviews", slog.Int("reviews", len(ids)), slog.Int("tracks", len(newData)))
+	p.log.Info("Processed reviews", slog.Int("reviews", len(ids)), slog.Int("tracks", len(newData)))
 	return nil
 }

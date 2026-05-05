@@ -13,6 +13,7 @@ type Config struct {
 	Port                    int    `mapstructure:"PORT" validate:"required"`
 	LogLevel                string `mapstructure:"LOG_LEVEL"`
 	ReviewProcessorSchedule string `mapstructure:"REVIEW_PROCESSOR_SCHEDULE"`
+	ArtistProcessorSchedule string `mapstructure:"ARTIST_PROCESSOR_SCHEDULE"`
 }
 
 func LoadConfig() *Config {

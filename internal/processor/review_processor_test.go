@@ -24,27 +24,24 @@ func discardLogger() *slog.Logger {
 func newProc(t *testing.T) (
 	*processor.ReviewProcessor,
 	*mocks.MockReviewRepository,
-	*mocks.MockTrackRepository,
-	*mocks.MockArtistRepository,
 	*mocks.MockScoreCommitter,
 ) {
 	rr := mocks.NewMockReviewRepository(t)
 	tr := mocks.NewMockTrackRepository(t)
-	ar := mocks.NewMockArtistRepository(t)
 	committer := mocks.NewMockScoreCommitter(t)
-	proc := processor.NewReviewProcessor(rr, tr, ar, committer, discardLogger())
-	return proc, rr, tr, ar, committer
+	proc := processor.NewReviewProcessor(rr, tr, committer, discardLogger())
+	return proc, rr, committer
 }
 
-func TestRun_NoReviews(t *testing.T) {
-	proc, rr, _, _, _ := newProc(t)
+func TestReviewRun_NoReviews(t *testing.T) {
+	proc, rr, _ := newProc(t)
 	rr.EXPECT().GetUnprocessed().Return([]models.Review{}, nil)
 
 	require.NoError(t, proc.Run(context.Background()))
 }
 
-func TestRun_AllNilTrackId(t *testing.T) {
-	proc, rr, _, _, _ := newProc(t)
+func TestReviewRun_AllNilTrackId(t *testing.T) {
+	proc, rr, _ := newProc(t)
 	rr.EXPECT().GetUnprocessed().Return([]models.Review{
 		{Id: 1, TrackId: nil, Score: 80},
 		{Id: 2, TrackId: nil, Score: 60},
@@ -53,8 +50,8 @@ func TestRun_AllNilTrackId(t *testing.T) {
 	require.NoError(t, proc.Run(context.Background()))
 }
 
-func TestRun_AllNilTrack(t *testing.T) {
-	proc, rr, _, _, _ := newProc(t)
+func TestReviewRun_AllNilTrack(t *testing.T) {
+	proc, rr, _ := newProc(t)
 	rr.EXPECT().GetUnprocessed().Return([]models.Review{
 		{Id: 1, TrackId: new(10), Track: nil, Score: 80},
 	}, nil)
@@ -62,8 +59,8 @@ func TestRun_AllNilTrack(t *testing.T) {
 	require.NoError(t, proc.Run(context.Background()))
 }
 
-func TestRun_SingleReview(t *testing.T) {
-	proc, rr, _, _, committer := newProc(t)
+func TestReviewRun_SingleReview(t *testing.T) {
+	proc, rr, committer := newProc(t)
 
 	rr.EXPECT().GetUnprocessed().Return([]models.Review{
 		{Id: 1, TrackId: new(10), Score: 70, Track: &models.Track{Id: 10, Score: 50, ReviewCount: 1}},
@@ -73,8 +70,8 @@ func TestRun_SingleReview(t *testing.T) {
 	require.NoError(t, proc.Run(context.Background()))
 }
 
-func TestRun_MultipleReviewsSameTrack(t *testing.T) {
-	proc, rr, _, _, committer := newProc(t)
+func TestReviewRun_MultipleReviewsSameTrack(t *testing.T) {
+	proc, rr, committer := newProc(t)
 
 	track := &models.Track{Id: 10, Score: 50, ReviewCount: 1}
 	rr.EXPECT().GetUnprocessed().Return([]models.Review{
@@ -86,8 +83,8 @@ func TestRun_MultipleReviewsSameTrack(t *testing.T) {
 	require.NoError(t, proc.Run(context.Background()))
 }
 
-func TestRun_MultipleTrackIds(t *testing.T) {
-	proc, rr, _, _, committer := newProc(t)
+func TestReviewRun_MultipleTrackIds(t *testing.T) {
+	proc, rr, committer := newProc(t)
 
 	rr.EXPECT().GetUnprocessed().Return([]models.Review{
 		{Id: 1, TrackId: new(1), Score: 70, Track: &models.Track{Id: 1, Score: 50, ReviewCount: 1}},
@@ -111,16 +108,16 @@ func TestRun_MultipleTrackIds(t *testing.T) {
 	assert.ElementsMatch(t, []int{1, 2}, capturedIds)
 }
 
-func TestRun_GetUnprocessedError(t *testing.T) {
-	proc, rr, _, _, _ := newProc(t)
+func TestReviewRun_GetUnprocessedError(t *testing.T) {
+	proc, rr, _ := newProc(t)
 	wantErr := errors.New("db error")
 	rr.EXPECT().GetUnprocessed().Return(nil, wantErr)
 
 	assert.ErrorIs(t, proc.Run(context.Background()), wantErr)
 }
 
-func TestRun_CommitBatchError(t *testing.T) {
-	proc, rr, _, _, committer := newProc(t)
+func TestReviewRun_CommitBatchError(t *testing.T) {
+	proc, rr, committer := newProc(t)
 	wantErr := errors.New("tx error")
 
 	rr.EXPECT().GetUnprocessed().Return([]models.Review{
@@ -131,8 +128,8 @@ func TestRun_CommitBatchError(t *testing.T) {
 	assert.ErrorIs(t, proc.Run(context.Background()), wantErr)
 }
 
-func TestRun_AlreadyRunning(t *testing.T) {
-	proc, rr, _, _, _ := newProc(t)
+func TestReviewRun_AlreadyRunning(t *testing.T) {
+	proc, rr, _ := newProc(t)
 
 	entered := make(chan struct{})
 	release := make(chan struct{})

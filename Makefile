@@ -1,13 +1,13 @@
 include .env
 
 MAIN_PATH=./cmd/server/main.go
-BINARY_NAME=server
+MAIN_PKG=./cmd/server
 MIGRATIONS_PATH=./db/migrations
 
 .PHONY: *
 
 run: swag
-	go run $(MAIN_PATH)
+	go run $(MAIN_PKG)
 
 swag:
 	swag fmt
@@ -17,7 +17,7 @@ setup:
 	cp .env.example .env
 
 build:
-	go build -o $(BINARY_NAME) $(MAIN_PATH)
+	go build $(MAIN_PKG)
 
 clean:
 	rm -f $(BINARY_NAME)

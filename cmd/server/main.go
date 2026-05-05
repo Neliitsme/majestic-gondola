@@ -17,7 +17,6 @@ import (
 
 	"majestic-gondola/docs"
 	"majestic-gondola/internal/handlers"
-	"majestic-gondola/internal/processor"
 	"majestic-gondola/internal/repository"
 	"majestic-gondola/internal/service"
 
@@ -97,28 +96,12 @@ func main() {
 		c.Redirect(http.StatusMovedPermanently, "/swagger/index.html")
 	})
 
-	// Set up review processor
+	// Set up processors
 	ctx, cancel := context.WithCancel(context.Background())
-	rps := config.ReviewProcessorSchedule
-	var c *cron.Cron
-
-	if rps != "" {
-		committer := repository.NewScoreCommitter(db)
-		proc := processor.NewReviewProcessor(rr, tr, ar, committer, logger)
-
-		c = cron.New()
-
-		if _, err := c.AddFunc(rps, func() {
-			if err := proc.Run(ctx); err != nil {
-				logger.Error("Review processor failed", slog.Any("error", err))
-			}
-		}); err != nil {
-			logger.Error("Invalid processor schedule", slog.String("schedule", rps), slog.Any("error", err))
-		}
-		logger.Info("Registered review processor job", slog.String("schedule", rps))
-
-		c.Start()
-	}
+	c := cron.New()
+	committer := repository.NewScoreCommitter(db)
+	setupProcessors(c, ctx, config, rr, tr, ar, committer, logger)
+	c.Start()
 
 	// Set up graceful shutdown
 	srv := &http.Server{
@@ -141,9 +124,7 @@ func main() {
 	logger.Info("Shutting down...")
 
 	cancel()
-	if c != nil {
-		c.Stop()
-	}
+	c.Stop()
 
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer shutdownCancel()

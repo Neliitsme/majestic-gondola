@@ -5,6 +5,7 @@
 package mocks
 
 import (
+	"context"
 	"majestic-gondola/internal/models"
 
 	mock "github.com/stretchr/testify/mock"
@@ -84,6 +85,63 @@ func (_c *MockArtistRepository_BulkCreate_Call) Return(err error) *MockArtistRep
 }
 
 func (_c *MockArtistRepository_BulkCreate_Call) RunAndReturn(run func(artists []*models.Artist) error) *MockArtistRepository_BulkCreate_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// BulkUpdateScores provides a mock function for the type MockArtistRepository
+func (_mock *MockArtistRepository) BulkUpdateScores(ctx context.Context, scores map[int]int) error {
+	ret := _mock.Called(ctx, scores)
+
+	if len(ret) == 0 {
+		panic("no return value specified for BulkUpdateScores")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, map[int]int) error); ok {
+		r0 = returnFunc(ctx, scores)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockArtistRepository_BulkUpdateScores_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'BulkUpdateScores'
+type MockArtistRepository_BulkUpdateScores_Call struct {
+	*mock.Call
+}
+
+// BulkUpdateScores is a helper method to define mock.On call
+//   - ctx context.Context
+//   - scores map[int]int
+func (_e *MockArtistRepository_Expecter) BulkUpdateScores(ctx interface{}, scores interface{}) *MockArtistRepository_BulkUpdateScores_Call {
+	return &MockArtistRepository_BulkUpdateScores_Call{Call: _e.mock.On("BulkUpdateScores", ctx, scores)}
+}
+
+func (_c *MockArtistRepository_BulkUpdateScores_Call) Run(run func(ctx context.Context, scores map[int]int)) *MockArtistRepository_BulkUpdateScores_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 map[int]int
+		if args[1] != nil {
+			arg1 = args[1].(map[int]int)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockArtistRepository_BulkUpdateScores_Call) Return(err error) *MockArtistRepository_BulkUpdateScores_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockArtistRepository_BulkUpdateScores_Call) RunAndReturn(run func(ctx context.Context, scores map[int]int) error) *MockArtistRepository_BulkUpdateScores_Call {
 	_c.Call.Return(run)
 	return _c
 }

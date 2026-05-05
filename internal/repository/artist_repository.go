@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"errors"
 	"log/slog"
 	"majestic-gondola/internal/apperr"
@@ -14,6 +15,7 @@ type ArtistRepository interface {
 	GetAll() ([]models.Artist, error)
 	BulkCreate(artists []*models.Artist) error
 	Update(artist *models.Artist) error
+	BulkUpdateScores(ctx context.Context, scores map[int]int) error
 }
 
 type artistRepository struct {
@@ -62,6 +64,21 @@ func (a *artistRepository) GetAll() ([]models.Artist, error) {
 	}
 
 	return artists, nil
+}
+
+// BulkUpdateScores implements [ArtistRepository].
+func (a *artistRepository) BulkUpdateScores(ctx context.Context, scores map[int]int) error {
+	return a.db.RunInTransaction(ctx, func(tx *pg.Tx) error {
+		for id, score := range scores {
+			if _, err := tx.Model(new(models.Artist)).
+				Set("score = ?", score).
+				Where("artist_id = ?", id).
+				Update(); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }
 
 // Update implements [ArtistRepository].
