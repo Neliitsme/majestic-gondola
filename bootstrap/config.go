@@ -19,7 +19,9 @@ type Config struct {
 func LoadConfig() *Config {
 	var config Config
 	viper.SetConfigFile(".env")
-	viper.ReadInConfig()
+	if err := viper.ReadInConfig(); err != nil {
+		panic(fmt.Errorf("No config file found: %w", err))
+	}
 
 	if err := viper.Unmarshal(&config); err != nil {
 		panic(fmt.Errorf("fatal error config file: %w", err))
