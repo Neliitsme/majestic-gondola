@@ -55,6 +55,8 @@ func ToTrackResponse(t *models.Track) dto.TrackResponse {
 		ReleaseDate: t.ReleaseDate.Format(time.DateTime),
 		Genres:      t.Genres,
 		CreatedAt:   t.CreatedAt.Format(time.DateTime),
+		Score:       t.Score,
+		ReviewCount: t.ReviewCount,
 	}
 }
 

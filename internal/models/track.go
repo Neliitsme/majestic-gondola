@@ -13,4 +13,5 @@ type Track struct {
 	CreatedAt   time.Time `pg:"default:now()"`
 	Score       int       `pg:"default:0"`
 	Artist      *Artist   `pg:"rel:has-one"`
+	ReviewCount int       `pg:"default:0"`
 }

@@ -36,6 +36,7 @@ type trackData struct {
 	sum          int
 	count        int
 	currentScore int
+	currentCount int
 }
 
 func (p *ReviewProcessor) Run(ctx context.Context) error {
@@ -63,6 +64,7 @@ func (p *ReviewProcessor) Run(ctx context.Context) error {
 		d.sum += r.Score
 		d.count++
 		d.currentScore = r.Track.Score
+		d.currentCount = r.Track.ReviewCount
 		data[*r.TrackId] = d
 		ids = append(ids, r.Id)
 	}
@@ -71,16 +73,18 @@ func (p *ReviewProcessor) Run(ctx context.Context) error {
 		return nil
 	}
 
-	// TODO: Store review count in the track to calculate correctly
-	newScores := make(map[int]int, len(data))
+	newData := make(map[int]repository.TrackScoresUpdate, len(data))
 	for trackId, d := range data {
-		newScores[trackId] = (d.currentScore + d.sum/d.count) / 2
+		newData[trackId] = repository.TrackScoresUpdate{
+			Score: (d.currentScore*d.currentCount + d.sum) / (d.currentCount + d.count),
+			Count: d.currentCount + d.count,
+		}
 	}
 
-	if err := p.committer.CommitBatch(ctx, newScores, ids); err != nil {
+	if err := p.committer.CommitBatch(ctx, newData, ids); err != nil {
 		return err
 	}
 
-	p.log.Info("processed reviews", slog.Int("reviews", len(ids)), slog.Int("tracks", len(newScores)))
+	p.log.Info("processed reviews", slog.Int("reviews", len(ids)), slog.Int("tracks", len(newData)))
 	return nil
 }

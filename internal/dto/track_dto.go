@@ -22,6 +22,7 @@ type TrackResponse struct {
 	Genres      []string `json:"genres" example:"Rock,Opera"`
 	CreatedAt   string   `json:"created_at" example:"2006-01-02 15:04:05"`
 	Score       int      `json:"score" example:"100"`
+	ReviewCount int      `json:"review_count" example:"100"`
 }
 
 type PopulateRequest struct {

@@ -9,6 +9,7 @@ import (
 
 	"majestic-gondola/internal/models"
 	"majestic-gondola/internal/processor"
+	"majestic-gondola/internal/repository"
 	"majestic-gondola/internal/repository/mocks"
 
 	"github.com/stretchr/testify/assert"
@@ -62,13 +63,12 @@ func TestRun_AllNilTrack(t *testing.T) {
 }
 
 func TestRun_SingleReview(t *testing.T) {
-	// track score=50, review score=70 => avgNew=70 => newScore=(50+70)/2=60
 	proc, rr, _, _, committer := newProc(t)
 
 	rr.EXPECT().GetUnprocessed().Return([]models.Review{
-		{Id: 1, TrackId: new(10), Score: 70, Track: &models.Track{Id: 10, Score: 50}},
+		{Id: 1, TrackId: new(10), Score: 70, Track: &models.Track{Id: 10, Score: 50, ReviewCount: 1}},
 	}, nil)
-	committer.EXPECT().CommitBatch(mock.Anything, map[int]int{10: 60}, []int{1}).Return(nil)
+	committer.EXPECT().CommitBatch(mock.Anything, map[int]repository.TrackScoresUpdate{10: {Score: 60, Count: 2}}, []int{1}).Return(nil)
 
 	require.NoError(t, proc.Run(context.Background()))
 }
@@ -76,12 +76,12 @@ func TestRun_SingleReview(t *testing.T) {
 func TestRun_MultipleReviewsSameTrack(t *testing.T) {
 	proc, rr, _, _, committer := newProc(t)
 
-	track := &models.Track{Id: 10, Score: 50}
+	track := &models.Track{Id: 10, Score: 50, ReviewCount: 1}
 	rr.EXPECT().GetUnprocessed().Return([]models.Review{
 		{Id: 1, TrackId: new(10), Score: 60, Track: track},
-		{Id: 2, TrackId: new(10), Score: 80, Track: track},
+		{Id: 2, TrackId: new(10), Score: 70, Track: track},
 	}, nil)
-	committer.EXPECT().CommitBatch(mock.Anything, map[int]int{10: 60}, []int{1, 2}).Return(nil)
+	committer.EXPECT().CommitBatch(mock.Anything, map[int]repository.TrackScoresUpdate{10: {Score: 60, Count: 3}}, []int{1, 2}).Return(nil)
 
 	require.NoError(t, proc.Run(context.Background()))
 }
@@ -90,21 +90,24 @@ func TestRun_MultipleTrackIds(t *testing.T) {
 	proc, rr, _, _, committer := newProc(t)
 
 	rr.EXPECT().GetUnprocessed().Return([]models.Review{
-		{Id: 1, TrackId: new(1), Score: 70, Track: &models.Track{Id: 1, Score: 50}},
-		{Id: 2, TrackId: new(2), Score: 40, Track: &models.Track{Id: 2, Score: 20}},
+		{Id: 1, TrackId: new(1), Score: 70, Track: &models.Track{Id: 1, Score: 50, ReviewCount: 1}},
+		{Id: 2, TrackId: new(2), Score: 40, Track: &models.Track{Id: 2, Score: 20, ReviewCount: 1}},
 	}, nil)
 
-	var capturedScores map[int]int
+	var capturedScores map[int]repository.TrackScoresUpdate
 	var capturedIds []int
 	committer.EXPECT().CommitBatch(mock.Anything, mock.Anything, mock.Anything).
-		RunAndReturn(func(_ context.Context, scores map[int]int, ids []int) error {
+		RunAndReturn(func(_ context.Context, scores map[int]repository.TrackScoresUpdate, ids []int) error {
 			capturedScores = scores
 			capturedIds = ids
 			return nil
 		})
 
 	require.NoError(t, proc.Run(context.Background()))
-	assert.Equal(t, map[int]int{1: 60, 2: 30}, capturedScores)
+	assert.Equal(t, map[int]repository.TrackScoresUpdate{
+		1: {Score: 60, Count: 2},
+		2: {Score: 30, Count: 2}},
+		capturedScores)
 	assert.ElementsMatch(t, []int{1, 2}, capturedIds)
 }
 
@@ -126,4 +129,28 @@ func TestRun_CommitBatchError(t *testing.T) {
 	committer.EXPECT().CommitBatch(mock.Anything, mock.Anything, mock.Anything).Return(wantErr)
 
 	assert.ErrorIs(t, proc.Run(context.Background()), wantErr)
+}
+
+func TestRun_AlreadyRunning(t *testing.T) {
+	proc, rr, _, _, _ := newProc(t)
+
+	entered := make(chan struct{})
+	release := make(chan struct{})
+
+	rr.EXPECT().GetUnprocessed().RunAndReturn(func() ([]models.Review, error) {
+		close(entered)
+		<-release
+		return nil, nil
+	})
+
+	done := make(chan error, 1)
+	go func() { done <- proc.Run(context.Background()) }()
+
+	<-entered // first Run is inside GetUnprocessed; isRunning == true
+
+	err := proc.Run(context.Background()) // second call: skipped
+	require.NoError(t, err)
+
+	close(release)
+	require.NoError(t, <-done)
 }

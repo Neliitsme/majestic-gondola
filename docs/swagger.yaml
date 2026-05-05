@@ -127,6 +127,9 @@ definitions:
       release_date:
         example: "1975-10-31 15:04:05"
         type: string
+      review_count:
+        example: 100
+        type: integer
       score:
         example: 100
         type: integer

@@ -1013,6 +1013,10 @@ const docTemplate = `{
                     "type": "string",
                     "example": "1975-10-31 15:04:05"
                 },
+                "review_count": {
+                    "type": "integer",
+                    "example": 100
+                },
                 "score": {
                     "type": "integer",
                     "example": 100
