@@ -89,6 +89,9 @@ func (r *reviewService) BulkDelete(ids []int) error {
 	err := r.reviewRepository.BulkDelete(ids)
 
 	if err != nil {
+		if errors.Is(err, apperr.ErrNotFound) {
+			return apperr.NotFound("Review not found", err)
+		}
 		r.log.Error("Failed to bulk delete reviews", slog.Any("error", err), slog.Int("ids_length", len(ids)))
 		return apperr.Internal(err)
 	}

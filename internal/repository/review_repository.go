@@ -45,7 +45,7 @@ func (r *reviewRepository) BulkCreate(reviews []*models.Review) error {
 func (r *reviewRepository) FindById(id int) (*models.Review, error) {
 	review := new(models.Review)
 
-	err := r.db.Model(review).Where("review_id = ?", id).Select()
+	err := r.db.Model(review).Where("review_id = ? AND is_deleted = false", id).Select()
 
 	if err != nil {
 		if errors.Is(err, pg.ErrNoRows) {
@@ -60,7 +60,7 @@ func (r *reviewRepository) FindById(id int) (*models.Review, error) {
 // GetAll implements [ReviewRepository].
 func (r *reviewRepository) GetAll() ([]models.Review, error) {
 	var reviews []models.Review
-	err := r.db.Model(&reviews).Select()
+	err := r.db.Model(&reviews).Where("is_deleted = false").Select()
 
 	if err != nil {
 		return nil, err
@@ -90,7 +90,7 @@ func (r *reviewRepository) GetUnprocessed() ([]models.Review, error) {
 	var reviews []models.Review
 	err := r.db.Model(&reviews).
 		Relation("Track").
-		Where("review.is_processed = false").
+		Where("review.is_processed = false AND review.is_deleted = false").
 		Select()
 
 	if err != nil {
@@ -100,13 +100,19 @@ func (r *reviewRepository) GetUnprocessed() ([]models.Review, error) {
 	return reviews, nil
 }
 
-// TODO: Use soft deletes
 // BulkDelete implements [ReviewRepository].
 func (r *reviewRepository) BulkDelete(ids []int) error {
-	_, err := r.db.Model(new(models.Review)).Where("review_id IN (?)", pg.In(ids)).Delete()
+	res, err := r.db.Model(new(models.Review)).
+		Set("is_deleted = true").
+		Where("review_id IN (?) AND is_deleted = false", pg.In(ids)).
+		Update()
 
 	if err != nil {
 		return err
+	}
+
+	if res.RowsAffected() == 0 {
+		return apperr.ErrNotFound
 	}
 
 	r.log.Info("Finished deleting reviews")
@@ -116,7 +122,7 @@ func (r *reviewRepository) BulkDelete(ids []int) error {
 // GetTrackReviews implements [ReviewRepository].
 func (r *reviewRepository) GetTrackReviews(trackId int) ([]models.Review, error) {
 	var reviews []models.Review
-	err := r.db.Model(&reviews).Where("track_id = ?", trackId).Select()
+	err := r.db.Model(&reviews).Where("track_id = ? AND is_deleted = false", trackId).Select()
 
 	if err != nil {
 		return nil, err
@@ -128,7 +134,7 @@ func (r *reviewRepository) GetTrackReviews(trackId int) ([]models.Review, error)
 // GetUserReviews implements [ReviewRepository].
 func (r *reviewRepository) GetUserReviews(userId int) ([]models.Review, error) {
 	var reviews []models.Review
-	err := r.db.Model(&reviews).Where("user_id = ?", userId).Select()
+	err := r.db.Model(&reviews).Where("user_id = ? AND is_deleted = false", userId).Select()
 
 	if err != nil {
 		return nil, err

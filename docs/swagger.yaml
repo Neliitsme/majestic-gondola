@@ -374,6 +374,36 @@ paths:
       tags:
       - reviews
   /reviews/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Soft-delete a review by its ID
+      parameters:
+      - description: Review ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Deleted
+        "400":
+          description: Invalid ID format
+          schema:
+            $ref: '#/definitions/ErrResponse'
+        "404":
+          description: Review not found
+          schema:
+            $ref: '#/definitions/ErrResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrResponse'
+      summary: Delete a review
+      tags:
+      - reviews
     get:
       consumes:
       - application/json

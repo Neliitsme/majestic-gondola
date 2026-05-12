@@ -19,9 +19,6 @@ setup:
 build:
 	go build $(MAIN_PKG)
 
-clean:
-	rm -f $(BINARY_NAME)
-
 test:
 	go test -v ./...
 

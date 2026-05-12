@@ -24,6 +24,7 @@ func (h *ReviewHandler) RegisterRoutes(rg *gin.RouterGroup) {
 	rg.GET("/:id", h.GetReview)
 	rg.POST("/", h.CreateReviews)
 	rg.PUT("/:id", h.UpdateReview)
+	rg.DELETE("/:id", h.DeleteReview)
 }
 
 func (h *ReviewHandler) RegisterNestedRoutes(tracks, users *gin.RouterGroup) {
@@ -144,6 +145,35 @@ func (h *ReviewHandler) UpdateReview(c *gin.Context) {
 
 	err := h.reviewService.Update(review)
 	if err != nil {
+		respondErr(c, err)
+		return
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
+// DeleteReview godoc
+//
+//	@Summary		Delete a review
+//	@Description	Soft-delete a review by its ID
+//	@Tags			reviews
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path	int	true	"Review ID"
+//	@Success		204	"Deleted"
+//	@Failure		400	{object}	dto.ErrResponse	"Invalid ID format"
+//	@Failure		404	{object}	dto.ErrResponse	"Review not found"
+//	@Failure		500	{object}	dto.ErrResponse	"Internal server error"
+//	@Router			/reviews/{id} [delete]
+func (h *ReviewHandler) DeleteReview(c *gin.Context) {
+	var req dto.IdUriRequest
+
+	if err := c.ShouldBindUri(&req); err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrResponse{Message: err.Error()})
+		return
+	}
+
+	if err := h.reviewService.BulkDelete([]int{req.Id}); err != nil {
 		respondErr(c, err)
 		return
 	}
