@@ -116,7 +116,9 @@ func main() {
 		}
 	}()
 
-	logger.Info("Starting server", slog.String("address", httpAddr), slog.String("swagger", httpAddr+"/swagger"))
+	logger.Info("Starting server",
+		slog.String("address", httpAddr),
+		slog.String("swagger", httpAddr+"/swagger"))
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)

@@ -4,7 +4,7 @@ MAIN_PATH=./cmd/server/main.go
 MAIN_PKG=./cmd/server
 MIGRATIONS_PATH=./db/migrations
 
-.PHONY: *
+.PHONY: run swag setup build clean test mup mdown seed
 
 run: swag
 	go run $(MAIN_PKG)
@@ -30,3 +30,6 @@ mup:
 
 mdown:
 	migrate -database ${POSTGRES_URL} -path ${MIGRATIONS_PATH} down
+
+seed:
+	psql ${POSTGRES_URL} < ./db/seed.sql
